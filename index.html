@@ -612,15 +612,69 @@
                 display: none !important;
             }
         }
+        /* ======================================================================= */
+/* COSMIC UPGRADE STYLES                                                  */
+/* ======================================================================= */
+
+/* Nebula Dust Simulation */
+.nebula-cloud {
+    position: fixed;
+    top: -50%; left: -50%; width: 200vw; height: 200vh;
+    background: 
+        radial-gradient(circle at 30% 40%, rgba(74, 20, 140, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(13, 71, 161, 0.15) 0%, transparent 45%);
+    filter: blur(80px);
+    z-index: var(--z-canvas);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    animation: nebula-drift 40s ease-in-out infinite alternate;
+}
+
+/* 10-Second Node Network Ripple Effect */
+.grid-ripple {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: var(--z-pattern);
+    opacity: 0;
+    background: radial-gradient(circle double at 50% 30%, transparent 0%, var(--color-accent-primary) 50%, transparent 51%);
+    background-size: 0% 0%;
+    background-position: center;
+}
+
+.grid-ripple.active {
+    animation: network-ripple 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Animations Dictionary Appendices */
+@keyframes nebula-drift {
+    0% { transform: rotate(0deg) scale(1); opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { transform: rotate(10deg) scale(1.1); opacity: 0.7; }
+}
+
+@keyframes network-ripple {
+    0% {
+        opacity: 0.6;
+        background-size: 0% 0%;
+        filter: blur(2px);
+    }
+    100% {
+        opacity: 0;
+        background-size: 300% 300%;
+        filter: blur(8px);
+    }
+}
     </style>
 </head>
 <body data-theme="dark">
 
-    <canvas id="particleCanvas" class="system-canvas" aria-hidden="true"></canvas>
-    
-    <div class="system-pattern" aria-hidden="true"></div>
-    
-    <div class="system-spotlight" id="spotlightAura" aria-hidden="true"></div>
+    <canvas id="bgCanvasFar" class="system-canvas" style="opacity: 0.5; z-index: -2;" aria-hidden="true"></canvas>
+<canvas id="particleCanvas" class="system-canvas" aria-hidden="true"></canvas>
+
+<div class="nebula-cloud" aria-hidden="true"></div>
+
+<div class="grid-ripple" id="gridRipple" aria-hidden="true"></div>
 
     <header class="controls-header">
         <div class="controls-clock" id="systemClock" aria-label="Current System Time">
@@ -632,6 +686,10 @@
             <span class="controls-theme-icon" id="themeIcon">✦</span>
             <span class="controls-theme-text">Ambient</span>
         </button>
+        <button class="controls-theme-toggle" id="audioToggleBtn" style="margin-right: var(--space-xs);" aria-label="Toggle ambient space drone">
+    <span class="controls-theme-icon" id="audioIcon">🔇</span>
+    <span class="controls-theme-text">Drone</span>
+</button>
     </header>
 
     <main class="hub-layout">
@@ -691,7 +749,60 @@
 
     <script>
         'use strict';
+class SpaceAudioEngine {
+    constructor() {
+        this.toggleBtn = document.getElementById('audioToggleBtn');
+        this.audioIcon = document.getElementById('audioIcon');
+        this.ctx = null;
+        this.oscillator = null;
+        this.filter = null;
+        this.isPlaying = false;
+        
+        if (this.toggleBtn) {
+            this.toggleBtn.addEventListener('click', () => this.toggleAtmosphere());
+        }
+    }
 
+    initAudio() {
+        // Synthesizes a real-time cinematic low-end ambient drone
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioContextClass();
+        
+        this.oscillator = this.ctx.createOscillator();
+        this.filter = this.ctx.createBiquadFilter();
+        const gainNode = this.ctx.createGain();
+
+        this.oscillator.type = 'sawtooth';
+        this.oscillator.frequency.setValueAtTime(55, this.ctx.currentTime); // Low A note
+
+        this.filter.type = 'lowpass';
+        this.filter.frequency.setValueAtTime(90, this.ctx.currentTime); // Strips harsh highs
+        this.filter.Q.setValueAtTime(5, this.ctx.currentTime);
+
+        gainNode.gain.setValueAtTime(0.12, this.ctx.currentTime); // Keeps it subtle/ambient
+
+        // Route: Osc -> Filter -> Volume Gain -> Speakers
+        this.oscillator.connect(this.filter);
+        this.filter.connect(gainNode);
+        gainNode.connect(this.ctx.destination);
+        
+        this.oscillator.start(0);
+    }
+
+    toggleAtmosphere() {
+        if (!this.ctx) this.initAudio();
+
+        if (this.isPlaying) {
+            this.ctx.suspend();
+            this.audioIcon.innerHTML = '🔇';
+            this.isPlaying = false;
+        } else {
+            this.ctx.resume();
+            this.audioIcon.innerHTML = '🔊';
+            this.isPlaying = true;
+        }
+    }
+}
         class ThemeManager {
             constructor() {
                 this.bodyElement = document.body;
@@ -817,28 +928,66 @@
 
         class CanvasParticleEngine {
             constructor() {
-                this.canvas = document.getElementById('particleCanvas');
-                
-                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                if (!this.canvas || prefersReducedMotion) return;
+    this.canvas = document.getElementById('particleCanvas');
+    // NEW: Far Background canvas tracking
+    this.canvasFar = document.getElementById('bgCanvasFar');
+    
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!this.canvas || prefersReducedMotion) return;
 
-                this.ctx = this.canvas.getContext('2d', { alpha: true });
-                this.particles = [];
-                
-                // UPGRADED CONFIG: More particles, slightly faster, longer connections
-                this.config = {
-                    particleCount: this.calculateOptimalParticleCount(),
-                    connectionDistance: 180, // Increased to make more webs
-                    mouseRepelRadius: 150, // Larger push area
-                    particleBaseSpeed: 0.35, // Slightly faster movement
-                    particleColor: '#d4af37',
-                    lineColor: 'rgba(214, 175, 55, ', 
-                };
+    this.ctx = this.canvas.getContext('2d', { alpha: true });
+    this.ctxFar = this.canvasFar.getContext('2d', { alpha: true });
+    
+    this.particles = [];
+    this.particlesFar = []; // NEW: Far star array
+    
+    this.config = {
+        particleCount: this.calculateOptimalParticleCount(),
+        connectionDistance: 180,
+        mouseRepelRadius: 150,
+        particleBaseSpeed: 0.35,
+        particleColor: '#d4af37',
+        lineColor: 'rgba(214, 175, 55, ', 
+    };
 
-                this.mouse = { x: -1000, y: -1000 };
-                this.init();
-            }
+    this.mouse = { x: -1000, y: -1000 };
+    this.init();
+    this.initNetworkRippleTimer(); // NEW: Fire timed pulses
+}
 
+init() {
+    this.resizeCanvas();
+    this.createParticles();
+    this.bindEvents();
+    requestAnimationFrame(() => this.animate());
+}
+
+// NEW: Generates 2 distinct depths of stars
+createParticles() {
+    this.particles = [];
+    this.particlesFar = [];
+    
+    // Close, large, connected stars
+    for (let i = 0; i < this.config.particleCount; i++) {
+        this.particles.push(new Particle(Math.random() * window.innerWidth, Math.random() * window.innerHeight, this.config.particleBaseSpeed));
+    }
+    // NEW: Far, tiny, faster decoupled background stars (Parallax)
+    for (let i = 0; i < this.config.particleCount * 1.5; i++) {
+        let pFar = new Particle(Math.random() * window.innerWidth, Math.random() * window.innerHeight, this.config.particleBaseSpeed * 2);
+        pFar.radius = Math.random() * 0.8 + 0.3; // Tiny pinpricks
+        this.particlesFar.push(pFar);
+    }
+}
+
+// NEW: Automatic 10-second physical grid ripples
+initNetworkRippleTimer() {
+    const rippleEl = document.getElementById('gridRipple');
+    if (!rippleEl) return;
+    setInterval(() => {
+        rippleEl.classList.add('active');
+        setTimeout(() => rippleEl.classList.remove('active'), 1900);
+    }, 10000); // 10000ms loop
+}
             calculateOptimalParticleCount() {
                 const area = window.innerWidth * window.innerHeight;
                 // UPGRADED: Denser particle calculation
@@ -889,14 +1038,17 @@
                 }
             }
 
-            resizeCanvas() {
-                const dpr = window.devicePixelRatio || 1;
-                this.canvas.width = window.innerWidth * dpr;
-                this.canvas.height = window.innerHeight * dpr;
-                this.ctx.scale(dpr, dpr);
-                this.canvas.style.width = `${window.innerWidth}px`;
-                this.canvas.style.height = `${window.innerHeight}px`;
-            }
+resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    [this.canvas, this.canvasFar].forEach(canv => {
+        canv.width = window.innerWidth * dpr;
+        canv.height = window.innerHeight * dpr;
+        canv.style.width = `${window.innerWidth}px`;
+        canv.style.height = `${window.innerHeight}px`;
+    });
+    this.ctx.scale(dpr, dpr);
+    this.ctxFar.scale(dpr, dpr);
+}
 
             createParticles() {
                 this.particles = [];
@@ -913,37 +1065,41 @@
                 }
             }
 
-            animate() {
-                this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+           animate() {
+    this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    this.ctxFar.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-                for (let i = 0; i < this.particles.length; i++) {
-                    const p1 = this.particles[i];
-                    p1.update(window.innerWidth, window.innerHeight, this.mouse, this.config.mouseRepelRadius);
-                    p1.draw(this.ctx, this.config.particleColor);
+    // Render Far Starfield Layer (No interconnected lines for deep depth)
+    this.particlesFar.forEach(p => {
+        p.update(window.innerWidth, window.innerHeight, this.mouse, 0); // Ignore mouse gravity far away
+        p.draw(this.ctxFar, this.config.particleColor);
+    });
 
-                    for (let j = i + 1; j < this.particles.length; j++) {
-                        const p2 = this.particles[j];
-                        const dx = p1.x - p2.x;
-                        const dy = p1.y - p2.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
+    // Render Near Starfield Layer (With full snapping and connections)
+    for (let i = 0; i < this.particles.length; i++) {
+        const p1 = this.particles[i];
+        p1.update(window.innerWidth, window.innerHeight, this.mouse, this.config.mouseRepelRadius);
+        p1.draw(this.ctx, this.config.particleColor);
 
-                        if (distance < this.config.connectionDistance) {
-                            // UPGRADED: Multiplied opacity by 0.95 for much brighter connecting lines
-                            const opacity = (1 - (distance / this.config.connectionDistance)) * 0.95;
-                            
-                            this.ctx.beginPath();
-                            this.ctx.strokeStyle = `${this.config.lineColor}${opacity})`;
-                            this.ctx.lineWidth = 1.2; // Slightly thicker lines
-                            this.ctx.moveTo(p1.x, p1.y);
-                            this.ctx.lineTo(p2.x, p2.y);
-                            this.ctx.stroke();
-                        }
-                    }
-                }
-                requestAnimationFrame(() => this.animate());
+        for (let j = i + 1; j < this.particles.length; j++) {
+            const p2 = this.particles[j];
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < this.config.connectionDistance) {
+                const opacity = (1 - (distance / this.config.connectionDistance)) * 0.95;
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = `${this.config.lineColor}${opacity})`;
+                this.ctx.lineWidth = 1.2;
+                this.ctx.moveTo(p1.x, p1.y);
+                this.ctx.lineTo(p2.x, p2.y);
+                this.ctx.stroke();
             }
         }
-
+    }
+    requestAnimationFrame(() => this.animate());
+}
         class Particle {
             constructor(x, y, baseSpeed) {
                 this.x = x;
@@ -957,27 +1113,35 @@
             }
 
             update(width, height, mouse, repelRadius) {
-                this.x += this.vx;
-                this.y += this.vy;
+    this.x += this.vx;
+    this.y += this.vy;
 
-                if (this.x < 0 || this.x > width) this.vx = -this.vx;
-                if (this.y < 0 || this.y > height) this.vy = -this.vy;
+    if (this.x < 0 || this.x > width) this.vx = -this.vx;
+    if (this.y < 0 || this.y > height) this.vy = -this.vy;
 
-                const dx = this.x - mouse.x;
-                const dy = this.y - mouse.y;
-                const distToMouse = Math.sqrt(dx * dx + dy * dy);
+    const dx = this.x - mouse.x;
+    const dy = this.y - mouse.y;
+    const distToMouse = Math.sqrt(dx * dx + dy * dy);
 
-                if (distToMouse < repelRadius) {
-                    const force = (repelRadius - distToMouse) / repelRadius;
-                    const angle = Math.atan2(dy, dx);
-                    
-                    this.x += Math.cos(angle) * force * 3;
-                    this.y += Math.sin(angle) * force * 3;
-                } else {
-                    this.vx += (this.baseVx - this.vx) * 0.05;
-                    this.vy += (this.baseVy - this.vy) * 0.05;
-                }
-            }
+    // NEW: Constellation Snapping Physics
+    const snappingThreshold = 75; 
+    
+    if (distToMouse < snappingThreshold) {
+        // Gravitational drag towards the mouse coordinates
+        this.x += (mouse.x - this.x) * 0.08;
+        this.y += (mouse.y - this.y) * 0.08;
+    } else if (distToMouse < repelRadius) {
+        // Keeps original repulsion safety margin outside snapping window
+        const force = (repelRadius - distToMouse) / repelRadius;
+        const angle = Math.atan2(dy, dx);
+        this.x += Math.cos(angle) * force * 2;
+        this.y += Math.sin(angle) * force * 2;
+    } else {
+        // Snap back cleanly to native trajectory vector
+        this.vx += (this.baseVx - this.vx) * 0.05;
+        this.vy += (this.baseVy - this.vy) * 0.05;
+    }
+}
 
             draw(ctx, color) {
                 ctx.beginPath();
@@ -995,6 +1159,7 @@
             const clockSystem = new ClockSystem();
             const auraTracker = new AuraTracker();
             const particleEngine = new CanvasParticleEngine();
+            const audioEngine = new SpaceAudioEngine();
 
             console.log(
                 '%c[ Dragontorpedo Enterprise Hub Initialized - High Vis Mode ]', 
