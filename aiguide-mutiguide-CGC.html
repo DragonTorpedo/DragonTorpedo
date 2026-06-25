@@ -1,683 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The 3-Engine Playbook</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude · Gemini · ChatGPT — The 3-Engine Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@500;600;700&family=Sora:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ease: cubic-bezier(.22,1,.36,1);
+    --ink:#15151A; --paper:#FFFFFF; --paper-2:#F4F4F2; --line:rgba(20,20,20,.1); --muted:#67676E;
 
-  <script>
-    /* Set theme before first paint to avoid a flash of the wrong theme */
-    (function () {
-      var preferred = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', preferred);
-    })();
-  </script>
+    /* Claude / Anthropic */
+    --c-bg:#FAF9F5; --c-text:#1A1916; --c-muted:#7A786E; --c-accent:#D97757; --c-line:rgba(20,20,19,.12); --c-radius:12px;
+    /* Gemini / Google */
+    --g-bg:#F5F8FE; --g-text:#1F1F1F; --g-muted:#5F6368; --g-blue:#4285F4; --g-purple:#8B5CF6; --g-pink:#D6478C; --g-line:rgba(15,15,20,.08); --g-radius:20px;
+    --g-gradient: linear-gradient(90deg,var(--g-blue),var(--g-purple),var(--g-pink));
+    /* ChatGPT / OpenAI */
+    --o-bg:#0D0D0D; --o-text:#ECECEC; --o-muted:#94948C; --o-accent:#10A37F; --o-line:rgba(255,255,255,.12); --o-radius:6px;
+  }
 
-  <style>
-    /* ── TOKENS ── */
-    :root {
-      --ease: cubic-bezier(0.22, 1, 0.36, 1);
-      --font-display: 'Sora', system-ui, sans-serif;
-      --font-body:    'Inter', system-ui, sans-serif;
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper); color:var(--ink); font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a{color:inherit;} ul{list-style:none;}
+  :focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 2rem;}
 
-      /* Gemini sparkle gradient */
-      --g-blue:   #4285F4;
-      --g-purple: #8B5CF6;
-      --g-pink:   #D6478C;
-      --g-gradient: linear-gradient(90deg, var(--g-blue), var(--g-purple), var(--g-pink));
+  /* ===== HERO ===== */
+  .hero{padding:5.5rem 0 3.5rem; text-align:center;}
+  .eyebrow{font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--muted); margin-bottom:1.3rem;}
+  .hero h1{font-size:clamp(2.1rem,5vw,3.4rem); line-height:1.15; font-weight:600; letter-spacing:-.01em;}
+  .hero h1 .w-claude{font-family:'Poppins',sans-serif; color:var(--c-accent);}
+  .hero h1 .w-gemini{font-family:'Sora',sans-serif; background:var(--g-gradient); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .hero h1 .w-gpt{font-family:'Space Grotesk',sans-serif; color:var(--o-accent);}
+  .hero p{margin-top:1.1rem; color:var(--muted); font-size:1rem; max-width:520px; margin-inline:auto; line-height:1.6;}
 
-      /* light theme (default) */
-      --bg:             #FFFFFF;
-      --bg-raised:      #F8F9FB;
-      --bg-translucent: rgba(255,255,255,0.82);
-      --border:         rgba(15,15,20,0.09);
-      --border-hover:   rgba(66,133,244,0.45);
-      --text-primary:   #1F1F1F;
-      --text-muted:     #5F6368;
-      --accent:         #3367D6;
-      --accent-dim:     rgba(66,133,244,0.09);
-      --glow-opacity:   0.16;
-      --card-shadow:    0 1px 2px rgba(15,15,20,0.05), 0 14px 32px -16px rgba(15,15,20,0.12);
-    }
+  /* ===== QUICK PICK ===== */
+  .pick{background:var(--paper-2); padding:3rem 0;}
+  .pick h2{font-size:1rem; letter-spacing:.04em; margin-bottom:1.4rem; text-align:center;}
+  .pick-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem;}
+  .pick-row{
+    display:flex; align-items:center; gap:.8rem; background:var(--paper);
+    border:1px solid var(--line); border-radius:10px; padding:.85rem 1rem;
+  }
+  .pick-row svg{width:18px; height:18px; flex-shrink:0; color:var(--muted);}
+  .pick-row .task{flex:1; font-size:.82rem; line-height:1.4;}
+  .pick-row .arrow{color:var(--muted); font-size:.8rem;}
+  .engine-pill{
+    font-size:.66rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    padding:.3rem .6rem; border-radius:999px; white-space:nowrap;
+  }
+  .engine-pill.claude{background:rgba(217,119,87,.14); color:var(--c-accent);}
+  .engine-pill.gemini{background:rgba(66,133,244,.12); color:#3367D6;}
+  .engine-pill.gpt{background:rgba(16,163,127,.14); color:#0E8C6C;}
 
-    html[data-theme="dark"] {
-      --bg:             #131314;
-      --bg-raised:      #1E1F20;
-      --bg-translucent: rgba(19,19,20,0.82);
-      --border:         rgba(255,255,255,0.08);
-      --border-hover:   rgba(138,180,248,0.45);
-      --text-primary:   #E3E3E3;
-      --text-muted:     #9AA0A6;
-      --accent:         #8AB4F8;
-      --accent-dim:     rgba(138,180,248,0.14);
-      --glow-opacity:   0.34;
-      --card-shadow:    0 1px 2px rgba(0,0,0,0.35), 0 14px 32px -16px rgba(0,0,0,0.55);
-    }
+  /* ===== ENGINES (full-bleed thirds) ===== */
+  .engines{display:grid; grid-template-columns:1fr 1fr 1fr;}
+  .engine{padding:3.5rem 2.2rem 3rem; display:flex; flex-direction:column;}
 
-    /* ── RESET ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-weight: 300;
-      min-height: 100dvh;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
-    }
-    a { color: inherit; text-decoration: none; }
-    button { font-family: inherit; cursor: pointer; border: none; background: none; }
-    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .company-tag{font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:.6rem; opacity:.65;}
+  .engine-name{font-size:2rem; font-weight:700; margin-bottom:.5rem;}
+  .engine-tagline{font-size:.86rem; line-height:1.55; margin-bottom:2rem; opacity:.85;}
 
-    /* ── LAYOUT ── */
-    .page { display: flex; flex-direction: column; min-height: 100dvh; }
+  .tier-list{display:flex; flex-direction:column; gap:.6rem; margin-bottom:2rem;}
+  .tier-row{padding:.7rem .9rem; border-left:3px solid; }
+  .tier-name{font-weight:700; font-size:.86rem; margin-bottom:.2rem;}
+  .tier-desc{font-size:.76rem; line-height:1.5; opacity:.8;}
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 1.5rem 2.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-translucent);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
-    }
-    .nav-logo {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      background: var(--g-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .nav-links { display: flex; gap: 2rem; }
-    .nav-links a {
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--text-primary); }
+  .block-title{font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; opacity:.6; margin-bottom:.8rem;}
+  .do-list{display:flex; flex-direction:column; gap:.55rem; margin-bottom:1.8rem;}
+  .do-list li{font-size:.78rem; line-height:1.55; padding-left:1.1rem; position:relative;}
+  .do-list li::before{content:"→"; position:absolute; left:0; opacity:.55;}
+  .do-list code{font-family:'SF Mono','Fira Code',monospace; font-size:.72rem; padding:.05em .35em; border-radius:4px;}
 
-    /* ── THEME TOGGLE ── */
-    .theme-toggle {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--bg-raised);
-      color: var(--text-primary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: border-color 0.2s, background-color 0.3s var(--ease), color 0.3s var(--ease);
-    }
-    .theme-toggle:hover { border-color: var(--border-hover); }
-    .theme-toggle svg { width: 18px; height: 18px; display: none; }
-    html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
-    html[data-theme="dark"]  .theme-toggle .icon-sun  { display: block; }
+  .callout{padding:1rem 1.1rem; font-size:.76rem; line-height:1.6; margin-top:auto;}
+  .callout code{display:block; font-family:'SF Mono','Fira Code',monospace; font-size:.74rem; margin:.5rem 0; padding:.5rem .65rem; border-radius:6px; overflow-x:auto;}
 
-    /* ── HERO ── */
-    .hero {
-      position: relative;
-      isolation: isolate;
-      padding: 16rem 2.5rem 8rem;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .hero-glow {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      filter: blur(70px);
-      opacity: var(--glow-opacity);
-      background:
-        radial-gradient(circle at 18% 30%, var(--g-blue), transparent 55%),
-        radial-gradient(circle at 82% 18%, var(--g-purple), transparent 55%),
-        radial-gradient(circle at 50% 92%, var(--g-pink), transparent 55%);
-      transition: opacity 0.4s var(--ease);
-    }
-    .hero-eyebrow {
-      font-size: 0.68rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 2rem;
-    }
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.8rem, 6vw, 5.2rem);
-      font-weight: 600;
-      line-height: 1.1;
-      letter-spacing: -0.01em;
-      margin-bottom: 1.8rem;
-    }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--text-muted);
-      display: block;
-      margin-top: 0.5rem;
-    }
-    .hero-sub {
-      font-size: 0.9rem;
-      line-height: 1.8;
-      color: var(--text-muted);
-      max-width: 520px;
-      margin: 0 auto 3rem;
-    }
-    .divider {
-      width: 56px; height: 3px;
-      border-radius: 999px;
-      background: var(--g-gradient);
-      margin: 0 auto;
-      opacity: 0.9;
-    }
+  /* --- Claude column --- */
+  .engine.claude{background:var(--c-bg); color:var(--c-text); font-family:'Inter',sans-serif;}
+  .engine.claude .engine-name{font-family:'Poppins',sans-serif; color:var(--c-text);}
+  .engine.claude .engine-tagline{font-family:'Lora',serif; font-style:italic;}
+  .engine.claude .tier-row{background:rgba(217,119,87,.06); border-radius:var(--c-radius); border-left-color:var(--c-accent);}
+  .engine.claude .tier-row:nth-child(2){border-left-color:rgba(217,119,87,.55);}
+  .engine.claude .tier-row:nth-child(3){border-left-color:rgba(217,119,87,.3);}
+  .engine.claude .tier-desc{color:var(--c-muted);}
+  .engine.claude .do-list code{background:rgba(217,119,87,.13); color:var(--c-accent);}
+  .engine.claude .callout{background:rgba(217,119,87,.08); border:1px solid rgba(217,119,87,.25); border-radius:var(--c-radius);}
+  .engine.claude .callout code{background:#1A1916; color:#F4DCC9;}
 
-    /* ── SECTION WRAPPER ── */
-    .section {
-      padding: 6rem 2.5rem;
-      max-width: 1100px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .section-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 3rem;
-    }
+  /* --- Gemini column --- */
+  .engine.gemini{background:var(--g-bg); color:var(--g-text); font-family:'Inter',sans-serif;}
+  .engine.gemini .engine-name{font-family:'Sora',sans-serif; background:var(--g-gradient); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .engine.gemini .tier-row{background:rgba(66,133,244,.05); border-radius:var(--g-radius); border-left-color:#4285F4;}
+  .engine.gemini .tier-row:nth-child(2){border-left-color:rgba(66,133,244,.55);}
+  .engine.gemini .tier-row:nth-child(3){border-left-color:rgba(66,133,244,.3);}
+  .engine.gemini .tier-desc{color:var(--g-muted);}
+  .engine.gemini .do-list code{background:rgba(139,92,246,.12); color:#6B46C1;}
+  .engine.gemini .callout{background:rgba(139,92,246,.07); border:1px solid rgba(139,92,246,.22); border-radius:var(--g-radius);}
 
-    /* ── MODEL CARDS (ENGINES) ── */
-    .models {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
-      background: var(--border); border: 1px solid var(--border);
-      border-radius: 20px; overflow: hidden;
-      box-shadow: var(--card-shadow);
-    }
-    .model-card {
-      position: relative;
-      background: var(--bg);
-      padding: 2.5rem 2rem;
-      transition: background-color 0.3s var(--ease);
-      display: flex;
-      flex-direction: column;
-    }
-    .model-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      background: var(--g-gradient);
-      opacity: 0.85;
-    }
-    .model-card:hover { background: var(--bg-raised); }
-    .model-tag {
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.2rem;
-    }
-    .model-name {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      font-weight: 600;
-      line-height: 1.2;
-      margin-bottom: 0.5rem;
-    }
-    .model-desc {
-      font-size: 0.8rem;
-      line-height: 1.75;
-      color: var(--text-muted);
-      margin-bottom: 1.8rem;
-    }
-    .model-specs { list-style: none; margin-bottom: 1.8rem; }
-    .model-specs li {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      padding: 0.55rem 0;
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      letter-spacing: 0.03em;
-    }
-    .model-specs li span {
-      color: var(--text-primary);
-      font-size: 0.7rem;
-      letter-spacing: 0.06em;
-      font-weight: 500;
-    }
+  /* --- ChatGPT column --- */
+  .engine.gpt{background:var(--o-bg); color:var(--o-text); font-family:'Inter',sans-serif;}
+  .engine.gpt .engine-name{font-family:'Space Grotesk',sans-serif; color:var(--o-accent);}
+  .engine.gpt .tier-row{background:rgba(255,255,255,.04); border-radius:var(--o-radius); border-left-color:var(--o-accent);}
+  .engine.gpt .tier-row:nth-child(2){border-left-color:rgba(16,163,127,.55);}
+  .engine.gpt .tier-row:nth-child(3){border-left-color:rgba(16,163,127,.3);}
+  .engine.gpt .tier-desc{color:var(--o-muted);}
+  .engine.gpt .do-list code{background:rgba(16,163,127,.16); color:#3DDCA8;}
+  .engine.gpt .callout{background:rgba(16,163,127,.06); border:1px solid rgba(16,163,127,.3); border-radius:var(--o-radius);}
 
-    /* Content specific formatting */
-    .block-title {
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-primary);
-      margin-bottom: 0.8rem;
-      font-weight: 500;
-    }
-    .do-list {
-      list-style: none;
-      margin-bottom: 1.8rem;
-    }
-    .do-list li {
-      font-size: 0.78rem;
-      line-height: 1.5;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      padding-left: 1.2rem;
-      position: relative;
-    }
-    .do-list li::before {
-      content: "→";
-      position: absolute;
-      left: 0;
-      color: var(--accent);
-      font-weight: 500;
-    }
-    .do-list code {
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.72rem;
-      color: var(--accent);
-      background: var(--accent-dim);
-      padding: 0.1em 0.35em;
-      border-radius: 4px;
-    }
-    .callout {
-      margin-top: auto;
-      background: var(--bg-raised);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.2rem;
-      font-size: 0.76rem;
-      line-height: 1.6;
-      color: var(--text-muted);
-    }
-    .callout code {
-      display: block;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.7rem;
-      color: var(--accent);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      padding: 0.5rem 0.75rem;
-      margin: 0.5rem 0;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
+  /* ===== WORKFLOWS ===== */
+  .workflows{padding:4.5rem 0; background:var(--paper);}
+  .workflows .head{text-align:center; margin-bottom:2.5rem;}
+  .workflows h2{font-size:1.6rem; font-weight:600;}
+  .workflows .head p{color:var(--muted); font-size:.86rem; margin-top:.5rem;}
 
-    /* ── TIPS & WORKFLOW CARDS ── */
-    .tips {
-      display: grid; grid-template-columns: repeat(2,1fr); gap: 1px;
-      background: var(--border); border: 1px solid var(--border);
-      border-radius: 20px; overflow: hidden;
-      box-shadow: var(--card-shadow);
-    }
-    .tip-card {
-      background: var(--bg);
-      padding: 2rem;
-      transition: background-color 0.3s var(--ease);
-    }
-    .tip-card:hover { background: var(--bg-raised); }
-    .tip-title {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-    .tip-body {
-      font-size: 0.8rem;
-      line-height: 1.8;
-      color: var(--text-muted);
-    }
-    .tip-body code {
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.72rem;
-      color: var(--accent);
-      background: var(--accent-dim);
-      padding: 0.1em 0.35em;
-      border-radius: 4px;
-    }
-    .engine-pill {
-      display: inline-block;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 0.25rem 0.75rem;
-      border: 1px solid var(--accent);
-      background: var(--accent-dim);
-      border-radius: 999px;
-      color: var(--accent);
-      font-weight: 600;
-      margin-top: 0.5rem;
-      margin-right: 0.5rem;
-    }
+  .flow-card{border:1px solid var(--line); border-radius:14px; padding:1.6rem 1.8rem; margin-bottom:1.2rem;}
+  .flow-card h3{font-size:.95rem; margin-bottom:1rem;}
+  .flow-row{display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;}
+  .flow-step{
+    display:flex; flex-direction:column; gap:.15rem; padding:.7rem 1rem; border-radius:10px;
+    font-size:.78rem; line-height:1.4; min-width:160px; flex:1;
+  }
+  .flow-step b{font-size:.8rem;}
+  .flow-step.claude{background:rgba(217,119,87,.1); color:#8C4A2E;}
+  .flow-step.gemini{background:rgba(66,133,244,.1); color:#2554B5;}
+  .flow-step.gpt{background:rgba(16,163,127,.1); color:#0E7A5E;}
+  .flow-step.neutral{background:var(--paper-2); color:var(--ink);}
+  .flow-arrow{color:var(--muted); font-size:1rem; flex-shrink:0;}
+  .flow-caption{margin-top:1rem; font-size:.76rem; color:var(--muted); font-style:italic;}
 
-    /* Workflows Specific */
-    .flow-row { margin-top: 1.2rem; }
-    .flow-step {
-      background: var(--bg-raised);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.5rem;
-    }
-    .flow-step b {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      color: var(--text-primary);
-      margin-bottom: 0.2rem;
-    }
-    .flow-step p {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .flow-arrow {
-      text-align: center;
-      color: var(--accent);
-      margin: 0.5rem 0;
-      font-size: 1.2rem;
-    }
+  /* ===== FOOTER ===== */
+  .stripe{height:8px; display:grid; grid-template-columns:1fr 1fr 1fr;}
+  .stripe div:nth-child(1){background:var(--c-accent);}
+  .stripe div:nth-child(2){background:var(--g-gradient);}
+  .stripe div:nth-child(3){background:var(--o-accent);}
+  footer{padding:2.2rem 0 3rem; text-align:center;}
+  footer p{font-size:.82rem; color:var(--ink); margin-bottom:.4rem;}
+  footer .meta{font-size:.7rem; color:var(--muted);}
 
-    /* ── FOOTER ── */
-    footer {
-      margin-top: auto;
-      padding: 3rem 2.5rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-    .footer-left {
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-style: italic;
-    }
-    .footer-right {
-      font-size: 0.65rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .models { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 820px) {
-      nav { padding: 1.2rem 1.5rem; }
-      .nav-links { gap: 1.2rem; }
-      .hero { padding: 10rem 1.5rem 5rem; }
-      .section { padding: 4rem 1.5rem; }
-      .tips { grid-template-columns: 1fr; }
-      footer { flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 2rem 1.5rem; }
-    }
-    @media (max-width: 480px) {
-      .nav-links { display: none; }
-      .hero h1 { font-size: 2.4rem; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-    }
-  </style>
+  /* ===== RESPONSIVE ===== */
+  @media (max-width:900px){
+    .engines{grid-template-columns:1fr;}
+    .pick-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 1.3rem;}
+    .hero{padding:3.5rem 0 2.5rem;}
+    .engine{padding:2.6rem 1.4rem 2.4rem;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition-duration:.01ms!important; animation-duration:.01ms!important;}
+  }
+</style>
 </head>
 <body>
 
-<div class="page">
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">The 3-Engine Playbook</p>
+    <h1><span class="w-claude">Claude.</span> <span class="w-gemini">Gemini.</span> <span class="w-gpt">ChatGPT.</span></h1>
+    <p>Three different engines built for three different jobs. Match the task — stop guessing.</p>
+  </div>
+</header>
 
-  <!-- NAV -->
-  <nav>
-    <div class="nav-logo">Playbook</div>
-    <div class="nav-links">
-      <a href="#pick">Quick Pick</a>
-      <a href="#engines">Engines</a>
-      <a href="#workflows">Workflows</a>
-    </div>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark theme">
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="4"></circle>
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-      </svg>
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-    </button>
-  </nav>
+<section class="pick">
+  <div class="wrap">
+    <h2>Open the right one</h2>
+    <div class="pick-grid">
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <p class="hero-eyebrow">The 3-Engine Playbook</p>
-    <h1>Claude.<br>Gemini.<br>ChatGPT.</h1>
-    <p class="hero-sub">Three different engines built for three different jobs. Match the task — stop guessing.</p>
-    <div class="divider"></div>
-  </header>
-
-  <!-- QUICK PICK -->
-  <section class="section" id="pick">
-    <p class="section-label">Open the right one</p>
-    <div class="tips">
-
-      <div class="tip-card">
-        <h3 class="tip-title">Huge document or research dump</h3>
-        <p class="tip-body">Feed it everything. It won't lose the thread.</p>
-        <span class="engine-pill">→ Gemini</span>
+      <div class="pick-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="7" x2="16" y2="7"></line><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg>
+        <span class="task">Huge document or research dump</span>
+        <span class="arrow">→</span>
+        <span class="engine-pill gemini">Gemini</span>
       </div>
 
-      <div class="tip-card">
-        <h3 class="tip-title">Production code & long agent runs</h3>
-        <p class="tip-body">Give it the hard, messy problem and walk away.</p>
-        <span class="engine-pill">→ Claude</span>
+      <div class="pick-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 4 12 9 6"></polyline><polyline points="15 6 20 12 15 18"></polyline></svg>
+        <span class="task">Production code, refactors, long agent runs</span>
+        <span class="arrow">→</span>
+        <span class="engine-pill claude">Claude</span>
       </div>
 
-      <div class="tip-card">
-        <h3 class="tip-title">Fast back-and-forth iteration</h3>
-        <p class="tip-body">Steer it mid-task without restarting the prompt.</p>
-        <span class="engine-pill">→ ChatGPT</span>
+      <div class="pick-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        <span class="task">Fast back-and-forth, steer it mid-task</span>
+        <span class="arrow">→</span>
+        <span class="engine-pill gpt">ChatGPT</span>
       </div>
 
-      <div class="tip-card">
-        <h3 class="tip-title">Reading video, audio, or images</h3>
-        <p class="tip-body">Natively built for heavy multimodal extraction.</p>
-        <span class="engine-pill">→ Gemini</span>
+      <div class="pick-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+        <span class="task">Reading video, audio, or images</span>
+        <span class="arrow">→</span>
+        <span class="engine-pill gemini">Gemini</span>
       </div>
 
-      <div class="tip-card">
-        <h3 class="tip-title">Writing that needs real nuance</h3>
-        <p class="tip-body">The best at avoiding robotic AI jargon.</p>
-        <span class="engine-pill">→ Claude</span>
+      <div class="pick-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+        <span class="task">Writing that needs real nuance</span>
+        <span class="arrow">→</span>
+        <span class="engine-pill claude">Claude</span>
       </div>
 
-      <div class="tip-card">
-        <h3 class="tip-title">Quick draft or simple chat</h3>
-        <p class="tip-body">Your fastest default for brainstorming.</p>
-        <span class="engine-pill">→ ChatGPT</span>
+      <div class="pick-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"></path></svg>
+        <span class="task">Quick draft, brainstorm, simple chat</span>
+        <span class="arrow">→</span>
+        <span class="engine-pill gpt">ChatGPT</span>
       </div>
 
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ENGINES -->
-  <section class="section" id="engines" style="padding-top:0;">
-    <p class="section-label">The Engines</p>
-    <div class="models">
+<section class="engines">
 
-      <!-- CLAUDE -->
-      <div class="model-card">
-        <p class="model-tag">Anthropic</p>
-        <h2 class="model-name">Claude</h2>
-        <p class="model-desc">The senior engineer. Give it the hard, messy problem.</p>
-        
-        <ul class="model-specs">
-          <li>Opus 4.7 <span>Big refactors & agents</span></li>
-          <li>Sonnet 4.6 <span>Daily driver & review</span></li>
-          <li>Haiku 4.5 <span>Bulk classification speed</span></li>
-        </ul>
+  <!-- CLAUDE -->
+  <div class="engine claude">
+    <div>
+      <p class="company-tag">Anthropic</p>
+      <h2 class="engine-name">Claude</h2>
+      <p class="engine-tagline">The senior engineer. Give it the hard, messy problem.</p>
 
-        <p class="block-title">Do this</p>
-        <ul class="do-list">
-          <li>Wrap inputs in <code>&lt;context&gt;</code> / <code>&lt;instructions&gt;</code> tags. Ask for <code>&lt;answer&gt;</code> back.</li>
-          <li>Say what to <strong>do</strong>, not what to avoid.</li>
-          <li>Hard problem? Just say "think thoroughly" — don't script the steps.</li>
-          <li>Give it a role and an output format in the same prompt.</li>
-        </ul>
-
-        <div class="callout">
-          Free local coding — route Claude Code through Ollama:
-          <code>claude --model qwen3-coder</code>
-          Set context to 64k+ first or long files get cut off. Recurring task? Save it once in <code>.claude/skills/</code> — pulled in only when needed.
-        </div>
+      <div class="tier-list">
+        <div class="tier-row"><div class="tier-name">Opus 4.7</div><div class="tier-desc">Hardest jobs — big refactors, architecture, long agent runs.</div></div>
+        <div class="tier-row"><div class="tier-name">Sonnet 4.6</div><div class="tier-desc">Daily driver. Code review, writing, most tasks.</div></div>
+        <div class="tier-row"><div class="tier-name">Haiku 4.5</div><div class="tier-desc">Bulk speed. Classification, simple API calls.</div></div>
       </div>
 
-      <!-- GEMINI -->
-      <div class="model-card">
-        <p class="model-tag">Google</p>
-        <h2 class="model-name">Gemini</h2>
-        <p class="model-desc">The researcher. Feed it everything — it won't lose the thread.</p>
-        
-        <ul class="model-specs">
-          <li>3.1 Pro <span>Judgment & ambiguous logic</span></li>
-          <li>3.5 Flash <span>Fastest daily extraction</span></li>
-          <li>3.1 Flash-Lite <span>High-volume routing</span></li>
-        </ul>
-
-        <p class="block-title">Do this</p>
-        <ul class="do-list">
-          <li>Loading a big document? Put instructions at the <strong>bottom</strong>, after the content.</li>
-          <li>Skip the copy-paste — <code>@Drive</code> / <code>@Gmail</code> pull files straight in.</li>
-          <li>Treat video and audio like text. Just upload and ask.</li>
-          <li>Say "keep the output concise" or it over-explains.</li>
-        </ul>
-
-        <div class="callout">
-          The 1M-token window holds up under real load — load the whole repo, not snippets. That's the actual edge over the other two.
-        </div>
-      </div>
-
-      <!-- CHATGPT -->
-      <div class="model-card">
-        <p class="model-tag">OpenAI</p>
-        <h2 class="model-name">ChatGPT</h2>
-        <p class="model-desc">The fast iterator. Steer it instead of restarting it.</p>
-        
-        <ul class="model-specs">
-          <li>GPT-5.5 Pro <span>Hardest, high-stakes work</span></li>
-          <li>GPT-5.5 Thinking <span>Coding & deep research</span></li>
-          <li>GPT-5.5 Instant <span>Fast default chat</span></li>
-        </ul>
-
-        <p class="block-title">Do this</p>
-        <ul class="do-list">
-          <li>Coding agent is <strong>Codex</strong> — message it mid-run to redirect, no restart needed.</li>
-          <li>Recurring job? Use Scheduled Tasks instead of re-prompting every time.</li>
-          <li>Write prompts like you'd talk — it rewards natural phrasing over rigid templates.</li>
-          <li>Lock in repeat context with a Project. Stop re-pasting the same brief.</li>
-        </ul>
-
-        <div class="callout">
-          Default model is Instant — switch to Thinking yourself for anything that actually matters.
-        </div>
-      </div>
-
+      <p class="block-title">Do this</p>
+      <ul class="do-list">
+        <li>Wrap inputs in <code>&lt;context&gt;</code> / <code>&lt;instructions&gt;</code> tags. Ask for <code>&lt;answer&gt;</code> back.</li>
+        <li>Say what to <strong>do</strong>, not what to avoid.</li>
+        <li>Hard problem? Just say "think thoroughly" — don't script the steps.</li>
+        <li>Give it a role and an output format in the same prompt.</li>
+      </ul>
     </div>
-  </section>
 
-  <!-- WORKFLOWS -->
-  <section class="section" id="workflows" style="padding-top:0;">
-    <p class="section-label">Chain Them Together</p>
-    <p class="hero-sub" style="margin: 0 0 2rem 0; text-align: left;">The real unlock isn't picking one. It's handing off between them.</p>
-    
-    <div class="tips">
-
-      <div class="tip-card">
-        <h3 class="tip-title">Design → Build</h3>
-        <p class="tip-body">Let Gemini throw shapes at the wall. Let Claude make them work.</p>
-        
-        <div class="flow-row">
-          <div class="flow-step">
-            <b>Gemini</b>
-            <p>Sketch the UI. Fast, cheap, good enough to throw away.</p>
-          </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <b>Claude</b>
-            <p>Wire up the logic. Debug it. Make it hold under real use.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="tip-card">
-        <h3 class="tip-title">Facts → Output</h3>
-        <p class="tip-body">Ground the facts before you generate anything — hallucination-proof by construction.</p>
-        
-        <div class="flow-row">
-          <div class="flow-step">
-            <b>Messy docs</b>
-            <p>Contracts, fee sheets, training material.</p>
-          </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <b>NotebookLM</b>
-            <p>Locks the facts. No hallucination, no drifting source.</p>
-          </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <b>Claude + Skill</b>
-            <p>Applies your format template. Deliverable is ready to send.</p>
-          </div>
-        </div>
-      </div>
-
+    <div class="callout">
+      Free local coding — route Claude Code through Ollama:
+      <code>claude --model qwen3-coder</code>
+      Set context to 64k+ first or long files get cut off. Recurring task? Save it once in <code>.claude/skills/</code> — pulled in only when needed.
     </div>
-  </section>
+  </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <p class="footer-left">Pick the engine for the job. Not out of habit.</p>
-    <p class="footer-right">Model names current as of June 2026.</p>
-  </footer>
+  <!-- GEMINI -->
+  <div class="engine gemini">
+    <div>
+      <p class="company-tag">Google</p>
+      <h2 class="engine-name">Gemini</h2>
+      <p class="engine-tagline">The researcher. Feed it everything — it won't lose the thread.</p>
 
-</div><!-- /.page -->
+      <div class="tier-list">
+        <div class="tier-row"><div class="tier-name">3.1 Pro</div><div class="tier-desc">Hardest reasoning. Ambiguous tasks, judgment calls on images & video.</div></div>
+        <div class="tier-row"><div class="tier-name">3.5 Flash</div><div class="tier-desc">Daily driver. Near-Pro smarts, fastest, the default pick.</div></div>
+        <div class="tier-row"><div class="tier-name">3.1 Flash-Lite</div><div class="tier-desc">Bulk extraction, routing, high-volume classification.</div></div>
+      </div>
 
-<script>
-'use strict';
+      <p class="block-title">Do this</p>
+      <ul class="do-list">
+        <li>Loading a big document? Put instructions at the <strong>bottom</strong>, after the content.</li>
+        <li>Skip the copy-paste — <code>@Drive</code> / <code>@Gmail</code> pull files straight in.</li>
+        <li>Treat video and audio like text. Just upload and ask.</li>
+        <li>Say "keep the output concise" or it over-explains.</li>
+      </ul>
+    </div>
 
-/* ── THEME TOGGLE ── */
-(function () {
-  const root = document.documentElement;
-  const toggle = document.getElementById('themeToggle');
+    <div class="callout">
+      The 1M-token window holds up under real load — load the whole repo, not snippets. That's the actual edge over the other two.
+    </div>
+  </div>
 
-  function applyTheme(theme) {
-    root.setAttribute('data-theme', theme);
-    root.style.colorScheme = theme;
-    toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-  }
+  <!-- CHATGPT -->
+  <div class="engine gpt">
+    <div>
+      <p class="company-tag">OpenAI</p>
+      <h2 class="engine-name">ChatGPT</h2>
+      <p class="engine-tagline">The fast iterator. Steer it instead of restarting it.</p>
 
-  // Sync the colorScheme style with whatever the early head script picked
-  applyTheme(root.getAttribute('data-theme') || 'light');
+      <div class="tier-list">
+        <div class="tier-row"><div class="tier-name">GPT-5.5 Pro</div><div class="tier-desc">Most thorough. Hardest, highest-stakes work.</div></div>
+        <div class="tier-row"><div class="tier-name">GPT-5.5 Thinking</div><div class="tier-desc">Daily driver. Coding, research, real documents.</div></div>
+        <div class="tier-row"><div class="tier-name">GPT-5.5 Instant</div><div class="tier-desc">Fast default. Quick chat, simple tasks.</div></div>
+      </div>
 
-  toggle.addEventListener('click', () => {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-  });
-})();
-</script>
+      <p class="block-title">Do this</p>
+      <ul class="do-list">
+        <li>Coding agent is <strong>Codex</strong> — message it mid-run to redirect, no restart needed.</li>
+        <li>Recurring job? Use Scheduled Tasks instead of re-prompting every time.</li>
+        <li>Write prompts like you'd talk — it rewards natural phrasing over rigid templates.</li>
+        <li>Lock in repeat context with a Project. Stop re-pasting the same brief.</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      Default model is Instant — switch to Thinking yourself for anything that actually matters.
+    </div>
+  </div>
+
+</section>
+
+<section class="workflows">
+  <div class="wrap">
+    <div class="head">
+      <h2>Chain Them Together</h2>
+      <p>The real unlock isn't picking one. It's handing off between them.</p>
+    </div>
+
+    <div class="flow-card">
+      <h3>Design → Build</h3>
+      <div class="flow-row">
+        <div class="flow-step gemini"><b>Gemini</b>Sketch the UI. Fast, cheap, good enough to throw away.</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step claude"><b>Claude</b>Wire up the logic. Debug it. Make it hold under real use.</div>
+      </div>
+      <p class="flow-caption">Let Gemini throw shapes at the wall. Let Claude make them work.</p>
+    </div>
+
+    <div class="flow-card">
+      <h3>Facts → Output</h3>
+      <div class="flow-row">
+        <div class="flow-step neutral"><b>Messy docs</b>Contracts, fee sheets, training material.</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step gemini"><b>NotebookLM</b>Locks the facts. No hallucination, no drifting source.</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step claude"><b>Claude + Skill</b>Applies your format template.</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step neutral"><b>Deliverable</b>Ready to send, unattended.</div>
+      </div>
+      <p class="flow-caption">Ground the facts before you generate anything — hallucination-proof by construction.</p>
+    </div>
+  </div>
+</section>
+
+<div class="stripe"><div></div><div></div><div></div></div>
+<footer>
+  <p>Pick the engine for the job. Not out of habit.</p>
+  <p class="meta">Model names current as of June 2026 — all three move fast. Check before you build on a version number.</p>
+</footer>
 
 </body>
 </html>
