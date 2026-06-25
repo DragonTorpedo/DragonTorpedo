@@ -337,29 +337,33 @@
 
       playAlarm() {
         if (!this.isInitialized) return;
-        const osc1 = this.ctx.createOscillator();
-        const osc2 = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
         
-        osc1.type = 'square';
-        osc2.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(880, this.ctx.currentTime);
-        osc2.frequency.setValueAtTime(885, this.ctx.currentTime); // Dissonance
-        
-        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.3, this.ctx.currentTime + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.6);
-        
-        osc1.connect(gain);
-        osc2.connect(gain);
-        gain.connect(this.reverbNode);
-        
-        osc1.start();
-        osc2.start();
-        osc1.stop(this.ctx.currentTime + 0.6);
-        osc2.stop(this.ctx.currentTime + 0.6);
+        const beepCount = 5;
+        const beepDuration = 0.06; // Short, clean duration
+        const interval = 0.15;     // Time between each beep
+        const frequency = 1046.50; // High C (C6), very clean and bright
+
+        for (let i = 0; i < beepCount; i++) {
+          const startTime = this.ctx.currentTime + (i * interval);
+          
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          
+          osc.type = 'sine'; // A pure, soft wave instead of a harsh square/sawtooth
+          osc.frequency.setValueAtTime(frequency, startTime);
+          
+          // Smooth volume envelope to make it sound premium and charming
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.linearRampToValueAtTime(0.15, startTime + 0.01); // Soft attack
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + beepDuration); // Elegant decay
+          
+          osc.connect(gain);
+          gain.connect(this.reverbNode); // Routes it through your luxury space reverb buffer
+          
+          osc.start(startTime);
+          osc.stop(startTime + beepDuration);
+        }
       }
-    }
 
     const sysAudio = new LeviathanAudio();
 
