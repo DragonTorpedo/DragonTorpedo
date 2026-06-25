@@ -30,28 +30,36 @@
       /* Model Branding Brand Colors */
       --color-openai: #10A37F;
       --color-openai-dim: rgba(16, 163, 127, 0.08);
+      --color-openai-glow: rgba(16, 163, 127, 0.15);
+      
       --color-gemini: #4285F4;
       --color-gemini-dim: rgba(66, 133, 244, 0.08);
+      --color-gemini-glow: rgba(66, 133, 244, 0.15);
+      
       --color-claude: #D97706;
       --color-claude-dim: rgba(217, 119, 6, 0.08);
+      --color-claude-glow: rgba(217, 119, 6, 0.15);
+      
       --color-notebooklm: #00838F;
       --color-notebooklm-dim: rgba(0, 131, 143, 0.08);
+      --color-notebooklm-glow: rgba(0, 131, 143, 0.15);
 
       /* Glow background elements */
       --g-gradient: linear-gradient(90deg, var(--color-gemini), var(--color-openai), var(--color-claude));
 
       /* Light Theme (Default) */
-      --bg: #F8FAFC;
+      --bg: #F4F6F9;
       --bg-raised: #FFFFFF;
-      --bg-translucent: rgba(248, 250, 252, 0.85);
+      --bg-translucent: rgba(244, 246, 249, 0.85);
       --border: rgba(15, 23, 42, 0.08);
-      --border-hover: rgba(15, 23, 42, 0.16);
+      --border-hover: rgba(15, 23, 42, 0.14);
       --text-primary: #0F172A;
       --text-muted: #475569;
       --text-dim: #94A3B8;
       --accent: #3b82f6;
-      --glow-opacity: 0.15;
-      --shadow: 0 1px 3px 0 rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.03);
+      --glow-opacity: 0.14;
+      --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03), 0 10px 15px -3px rgba(15, 23, 42, 0.05);
+      --shadow-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
     }
 
     html[data-theme="dark"] {
@@ -60,13 +68,14 @@
       --bg-raised: #121214;
       --bg-translucent: rgba(9, 9, 11, 0.85);
       --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.18);
+      --border-hover: rgba(255, 255, 255, 0.16);
       --text-primary: #FAFAFA;
       --text-muted: #A1A1AA;
       --text-dim: #52525B;
       --accent: #60a5fa;
       --glow-opacity: 0.28;
       --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+      --shadow-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
     }
 
     /* ── BASE RESET ── */
@@ -137,7 +146,7 @@
 
     /* ── THEME TOGGLE ── */
     .theme-toggle {
-      width: 36px; height: 36px;
+      width: 38px; height: 38px;
       border-radius: 50%;
       border: 1px solid var(--border);
       background: var(--bg-raised);
@@ -145,9 +154,16 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: border-color 0.2s, background-color 0.3s var(--ease);
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s, background-color 0.3s var(--ease), transform 0.2s;
     }
-    .theme-toggle:hover { border-color: var(--border-hover); }
+    .theme-toggle:hover {
+      border-color: var(--border-hover);
+      transform: rotate(15deg);
+    }
+    .theme-toggle:active {
+      transform: scale(0.95) rotate(15deg);
+    }
     .theme-toggle svg { width: 16px; height: 16px; display: none; }
     html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
     html[data-theme="dark"]  .theme-toggle .icon-sun  { display: block; }
@@ -218,28 +234,31 @@
     }
     .pm-step { display: flex; align-items: center; }
     .pm-node {
-      width: 26px; height: 26px;
+      width: 30px; height: 30px;
       border-radius: 50%;
       border: 1px solid var(--border);
       background: var(--bg);
       display: flex; align-items: center; justify-content: center;
       font-family: var(--font-ui);
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       font-weight: 600;
       color: var(--text-muted);
+      box-shadow: var(--shadow-inset);
       transition: all 0.25s var(--ease);
       cursor: pointer;
     }
     .pm-node:hover {
       border-color: var(--node-color);
       color: var(--node-color);
-      box-shadow: 0 0 10px var(--node-color-dim);
+      transform: scale(1.1);
+      box-shadow: 0 0 12px var(--node-color-dim);
     }
     .pm-node.active {
       border-color: var(--node-color);
       background: var(--node-color);
       color: #FFF !important;
-      box-shadow: 0 0 12px var(--node-color);
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--node-color);
     }
     .pm-line {
       width: 24px; height: 2px;
@@ -274,31 +293,50 @@
     .filter-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.6rem;
       justify-content: center;
     }
     .filter-btn {
-      padding: 0.4rem 1rem;
-      font-size: 0.62rem;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.65rem;
       font-family: var(--font-ui);
-      font-weight: 500;
-      letter-spacing: 0.06em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       border: 1px solid var(--border);
       border-radius: 999px;
       color: var(--text-muted);
       background: var(--bg-raised);
-      transition: all 0.2s var(--ease);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.25s var(--ease);
+    }
+    .filter-btn-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--dot-color, var(--text-muted));
+      transition: transform 0.2s;
     }
     .filter-btn:hover {
       color: var(--text-primary);
       border-color: var(--border-hover);
+      transform: translateY(-1.5px);
+      box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08);
+    }
+    .filter-btn:active {
+      transform: translateY(0.5px);
     }
     .filter-btn.active {
       background: var(--btn-color, var(--text-primary));
       border-color: var(--btn-color, var(--text-primary));
       color: #FFF;
-      box-shadow: 0 4px 12px -2px var(--btn-shadow, rgba(0,0,0,0.1));
+      box-shadow: 0 6px 15px -3px var(--btn-shadow, rgba(0,0,0,0.15));
+    }
+    .filter-btn.active .filter-btn-dot {
+      background: #FFF !important;
+      transform: scale(1.2);
     }
 
     /* ── STEPS MAIN CONTENT ── */
@@ -459,35 +497,71 @@
     .step-techniques {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
+      gap: 1.25rem;
       margin-bottom: 1.5rem;
     }
     .technique-card {
       background: var(--bg-raised);
-      padding: 1.25rem;
-      transition: background-color 0.2s;
+      padding: 1.35rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+      transition: all 0.3s var(--ease);
     }
-    .technique-card:hover { background: var(--bg); }
+    /* subtle colored border design indicator at top of cards */
+    .technique-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--step-color);
+      opacity: 0.25;
+      transition: opacity 0.3s;
+    }
+    .technique-card:hover {
+      background: var(--bg-raised);
+      border-color: rgba(var(--step-color-rgb), 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -4px var(--step-color-glow, rgba(0,0,0,0.08));
+    }
+    .technique-card:hover::before {
+      opacity: 1;
+    }
     .technique-head {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
+      gap: 0.6rem;
     }
-    .technique-icon { font-size: 1rem; }
+    .technique-icon-wrapper {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: rgba(var(--step-color-rgb), 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+    .technique-card:hover .technique-icon-wrapper {
+      background: rgba(var(--step-color-rgb), 0.14);
+    }
+    .technique-icon {
+      font-size: 0.9rem;
+    }
     .technique-name {
       font-family: var(--font-ui);
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-primary);
+      letter-spacing: 0.02em;
     }
     .technique-desc {
       font-size: 0.72rem;
-      line-height: 1.6;
+      line-height: 1.65;
       color: var(--text-muted);
     }
     .technique-desc code {
@@ -495,14 +569,14 @@
       font-size: 0.65rem;
       color: var(--step-color);
       background: rgba(var(--step-color-rgb), 0.08);
-      padding: 0.1em 0.3em;
+      padding: 0.15em 0.35em;
       border-radius: 4px;
     }
 
     /* Why Section Callout */
     .step-why {
       padding: 1.2rem 1.5rem;
-      border-left: 2px solid var(--step-color);
+      border-left: 3px solid var(--step-color);
       background: rgba(var(--step-color-rgb), 0.03);
       border-radius: 0 12px 12px 0;
     }
@@ -681,11 +755,26 @@
     <div class="filter-wrapper" id="models-overview">
       <p class="filter-label">Highlight Steps by Model Integration</p>
       <div class="filter-group">
-        <button class="filter-btn active" data-filter="all">Show All</button>
-        <button class="filter-btn" data-filter="openai" style="--btn-color: var(--color-openai); --btn-shadow: var(--color-openai-dim);">OpenAI</button>
-        <button class="filter-btn" data-filter="gemini" style="--btn-color: var(--color-gemini); --btn-shadow: var(--color-gemini-dim);">Gemini</button>
-        <button class="filter-btn" data-filter="claude" style="--btn-color: var(--color-claude); --btn-shadow: var(--color-claude-dim);">Claude</button>
-        <button class="filter-btn" data-filter="notebooklm" style="--btn-color: var(--color-notebooklm); --btn-shadow: var(--color-notebooklm-dim);">NotebookLM</button>
+        <button class="filter-btn active" data-filter="all">
+          <span class="filter-btn-dot" style="--dot-color: var(--text-primary);"></span>
+          Show All
+        </button>
+        <button class="filter-btn" data-filter="openai" style="--btn-color: var(--color-openai); --btn-shadow: var(--color-openai-glow); --dot-color: var(--color-openai);">
+          <span class="filter-btn-dot"></span>
+          OpenAI
+        </button>
+        <button class="filter-btn" data-filter="gemini" style="--btn-color: var(--color-gemini); --btn-shadow: var(--color-gemini-glow); --dot-color: var(--color-gemini);">
+          <span class="filter-btn-dot"></span>
+          Gemini
+        </button>
+        <button class="filter-btn" data-filter="claude" style="--btn-color: var(--color-claude); --btn-shadow: var(--color-claude-glow); --dot-color: var(--color-claude);">
+          <span class="filter-btn-dot"></span>
+          Claude
+        </button>
+        <button class="filter-btn" data-filter="notebooklm" style="--btn-color: var(--color-notebooklm); --btn-shadow: var(--color-notebooklm-glow); --dot-color: var(--color-notebooklm);">
+          <span class="filter-btn-dot"></span>
+          NotebookLM
+        </button>
       </div>
     </div>
   </header>
@@ -698,7 +787,7 @@
     </div>
 
     <!-- PHASE 1 -->
-    <div class="step-row" id="step-1" data-models="openai gemini" style="--step-color: var(--color-openai); --step-color-rgb: 16, 163, 127;">
+    <div class="step-row" id="step-1" data-models="openai gemini" style="--step-color: var(--color-openai); --step-color-rgb: 16, 163, 127; --step-color-glow: var(--color-openai-glow);">
       <div class="step-num-col">
         <span class="step-num-display">1</span>
       </div>
@@ -727,28 +816,36 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">📄</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">📄</span>
+              </span>
               <span class="technique-name">user.md</span>
             </div>
             <p class="technique-desc">Defines your background, precise industry expertise, and hard operational rules.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🧬</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🧬</span>
+              </span>
               <span class="technique-name">soul.md</span>
             </div>
             <p class="technique-desc">Locks in voice pacing, strict communication formats, and rules limiting fluff words.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🎯</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🎯</span>
+              </span>
               <span class="technique-name">identity.md</span>
             </div>
             <p class="technique-desc">Forces the assistant's clear duty profile, like assigning a <code>Chief of Staff</code> role.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🎙️</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🎙️</span>
+              </span>
               <span class="technique-name">Interview Method</span>
             </div>
             <p class="technique-desc">Prompt your model to interview you, then build your system templates from those replies.</p>
@@ -763,7 +860,7 @@
     </div>
 
     <!-- PHASE 2 -->
-    <div class="step-row" id="step-2" data-models="notebooklm gemini" style="--step-color: var(--color-gemini); --step-color-rgb: 66, 133, 244;">
+    <div class="step-row" id="step-2" data-models="notebooklm gemini" style="--step-color: var(--color-gemini); --step-color-rgb: 66, 133, 244; --step-color-glow: var(--color-gemini-glow);">
       <div class="step-num-col">
         <span class="step-num-display">2</span>
       </div>
@@ -792,21 +889,27 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">📚</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">📚</span>
+              </span>
               <span class="technique-name">Vetted Ingest</span>
             </div>
             <p class="technique-desc">Upload verified references exclusively into isolated folders to isolate sources.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">📋</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">📋</span>
+              </span>
               <span class="technique-name">Planning PRD</span>
             </div>
             <p class="technique-desc">Use planning prompts to create clear blueprints defining the task ahead.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🔍</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🔍</span>
+              </span>
               <span class="technique-name">Blind-Spot Scan</span>
             </div>
             <p class="technique-desc">Query sources: <code>"What core subtopics are omitted from these uploads?"</code> to plug knowledge gaps.</p>
@@ -821,7 +924,7 @@
     </div>
 
     <!-- PHASE 3 -->
-    <div class="step-row" id="step-3" data-models="gemini openai" style="--step-color: var(--color-openai); --step-color-rgb: 16, 163, 127;">
+    <div class="step-row" id="step-3" data-models="gemini openai" style="--step-color: var(--color-openai); --step-color-rgb: 16, 163, 127; --step-color-glow: var(--color-openai-glow);">
       <div class="step-num-col">
         <span class="step-num-display">3</span>
       </div>
@@ -850,21 +953,27 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🖼️</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🖼️</span>
+              </span>
               <span class="technique-name">Canvas Selection</span>
             </div>
             <p class="technique-desc">Edit sections directly inside visual workspaces to tweak tone without restarting prompts.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🧠</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🧠</span>
+              </span>
               <span class="technique-name">Advisor Board</span>
             </div>
             <p class="technique-desc">Instruct the AI to simulate classic experts relevant to your business domain.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">📐</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">📐</span>
+              </span>
               <span class="technique-name">PSL Framework</span>
             </div>
             <p class="technique-desc">Reformat responses into strict, high-impact loops: <code>Point, Story, Lesson</code>.</p>
@@ -879,7 +988,7 @@
     </div>
 
     <!-- PHASE 4 -->
-    <div class="step-row" id="step-4" data-models="notebooklm claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6;">
+    <div class="step-row" id="step-4" data-models="notebooklm claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6; --step-color-glow: var(--color-claude-glow);">
       <div class="step-num-col">
         <span class="step-num-display">4</span>
       </div>
@@ -908,21 +1017,27 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">⚡</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">⚡</span>
+              </span>
               <span class="technique-name">The Split Setup</span>
             </div>
             <p class="technique-desc">Isolate verified facts in NotebookLM; run execution tasks with highly capable coding assistants.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🤖</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🤖</span>
+              </span>
               <span class="technique-name">Sub-Agent Chains</span>
             </div>
             <p class="technique-desc">Instruct primary agents to run background units that check style and logic.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">⏰</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">⏰</span>
+              </span>
               <span class="technique-name">Scheduled Tasks</span>
             </div>
             <p class="technique-desc">Schedule workflows to complete research, reporting, and coding reviews automatically.</p>
@@ -937,7 +1052,7 @@
     </div>
 
     <!-- PHASE 5 -->
-    <div class="step-row" id="step-5" data-models="claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6;">
+    <div class="step-row" id="step-5" data-models="claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6; --step-color-glow: var(--color-claude-glow);">
       <div class="step-num-col">
         <span class="step-num-display">5</span>
       </div>
@@ -966,21 +1081,27 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">✍️</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">✍️</span>
+              </span>
               <span class="technique-name">Tone Extraction</span>
             </div>
             <p class="technique-desc">Feed chosen writing samples to the model to generate permanent custom Style Guides.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🔗</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🔗</span>
+              </span>
               <span class="technique-name">X-High Setting</span>
             </div>
             <p class="technique-desc">Utilize deep reasoning to review work for structural flow and logical gaps.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🌟</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🌟</span>
+              </span>
               <span class="technique-name">Adaptive Reasoning</span>
             </div>
             <p class="technique-desc">Rely on self-correcting models to tweak styles dynamically without human steering.</p>
@@ -995,7 +1116,7 @@
     </div>
 
     <!-- PHASE 6 -->
-    <div class="step-row" id="step-6" data-models="claude gemini" style="--step-color: var(--color-gemini); --step-color-rgb: 66, 133, 244;">
+    <div class="step-row" id="step-6" data-models="claude gemini" style="--step-color: var(--color-gemini); --step-color-rgb: 66, 133, 244; --step-color-glow: var(--color-gemini-glow);">
       <div class="step-num-col">
         <span class="step-num-display">6</span>
       </div>
@@ -1024,21 +1145,27 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🔄</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🔄</span>
+              </span>
               <span class="technique-name">Hot-Swap</span>
             </div>
             <p class="technique-desc">Switch active conversations to faster models for basic edits and structural formatting.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🚫</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🚫</span>
+              </span>
               <span class="technique-name">.geminiignore</span>
             </div>
             <p class="technique-desc">Deploy blocklists to ignore heavy assets like diagnostic logs or media files.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">💾</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">💾</span>
+              </span>
               <span class="technique-name">Knowledge Saving</span>
             </div>
             <p class="technique-desc">Save finalized work directly back into project hubs to build local reference libraries.</p>
@@ -1053,7 +1180,7 @@
     </div>
 
     <!-- PHASE 7 -->
-    <div class="step-row" id="step-7" data-models="claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6;">
+    <div class="step-row" id="step-7" data-models="claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6; --step-color-glow: var(--color-claude-glow);">
       <div class="step-num-col">
         <span class="step-num-display">7</span>
       </div>
@@ -1078,21 +1205,27 @@
         <div class="step-techniques">
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🌙</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🌙</span>
+              </span>
               <span class="technique-name">Nightly Audits</span>
             </div>
             <p class="technique-desc">Schedule background scripts to classify, clean, and index new research files.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">🔗</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">🔗</span>
+              </span>
               <span class="technique-name">Orphan Scans</span>
             </div>
             <p class="technique-desc">Find scattered workspace concepts and construct fresh structural indexes automatically.</p>
           </div>
           <div class="technique-card">
             <div class="technique-head">
-              <span class="technique-icon">📊</span>
+              <span class="technique-icon-wrapper">
+                <span class="technique-icon">📊</span>
+              </span>
               <span class="technique-name">Auto-Cleaning</span>
             </div>
             <p class="technique-desc">Instruct background scripts to merge matching research and organize asset files.</p>
