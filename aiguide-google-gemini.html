@@ -6,22 +6,55 @@
   <title>Gemini — Model Guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    /* Set theme before first paint to avoid a flash of the wrong theme */
+    (function () {
+      var preferred = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', preferred);
+    })();
+  </script>
 
   <style>
     /* ── TOKENS ── */
     :root {
-      --bg:          #111110;
-      --bg-raised:   #181817;
-      --border:      rgba(255,255,255,0.07);
-      --border-hover:rgba(201,168,76,0.4);
-      --text-primary:#F2EFE8;
-      --text-muted:  #7A7872;
-      --gold:        #C9A84C;
-      --gold-dim:    rgba(201,168,76,0.15);
-      --font-display:'Cormorant Garamond', Georgia, serif;
-      --font-body:   'Inter', system-ui, sans-serif;
-      --ease:        cubic-bezier(0.22, 1, 0.36, 1);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display: 'Sora', system-ui, sans-serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+
+      /* Gemini sparkle gradient */
+      --g-blue:   #4285F4;
+      --g-purple: #8B5CF6;
+      --g-pink:   #D6478C;
+      --g-gradient: linear-gradient(90deg, var(--g-blue), var(--g-purple), var(--g-pink));
+
+      /* light theme (default) */
+      --bg:             #FFFFFF;
+      --bg-raised:      #F8F9FB;
+      --bg-translucent: rgba(255,255,255,0.82);
+      --border:         rgba(15,15,20,0.09);
+      --border-hover:   rgba(66,133,244,0.45);
+      --text-primary:   #1F1F1F;
+      --text-muted:     #5F6368;
+      --accent:         #3367D6;
+      --accent-dim:     rgba(66,133,244,0.09);
+      --glow-opacity:   0.16;
+      --card-shadow:    0 1px 2px rgba(15,15,20,0.05), 0 14px 32px -16px rgba(15,15,20,0.12);
+    }
+
+    html[data-theme="dark"] {
+      --bg:             #131314;
+      --bg-raised:      #1E1F20;
+      --bg-translucent: rgba(19,19,20,0.82);
+      --border:         rgba(255,255,255,0.08);
+      --border-hover:   rgba(138,180,248,0.45);
+      --text-primary:   #E3E3E3;
+      --text-muted:     #9AA0A6;
+      --accent:         #8AB4F8;
+      --accent-dim:     rgba(138,180,248,0.14);
+      --glow-opacity:   0.34;
+      --card-shadow:    0 1px 2px rgba(0,0,0,0.35), 0 14px 32px -16px rgba(0,0,0,0.55);
     }
 
     /* ── RESET ── */
@@ -35,9 +68,11 @@
       min-height: 100dvh;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
     }
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
     /* ── LAYOUT ── */
     .page { display: flex; flex-direction: column; min-height: 100dvh; }
@@ -48,15 +83,20 @@
       padding: 1.5rem 2.5rem;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: var(--bg);
+      background: var(--bg-translucent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
     }
     .nav-logo {
       font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-primary);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      background: var(--g-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
     .nav-links { display: flex; gap: 2rem; }
     .nav-links a {
@@ -68,24 +108,57 @@
     }
     .nav-links a:hover { color: var(--text-primary); }
 
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-raised);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background-color 0.3s var(--ease), color 0.3s var(--ease);
+    }
+    .theme-toggle:hover { border-color: var(--border-hover); }
+    .theme-toggle svg { width: 18px; height: 18px; display: none; }
+    html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+    html[data-theme="dark"]  .theme-toggle .icon-sun  { display: block; }
+
     /* ── HERO ── */
     .hero {
+      position: relative;
+      isolation: isolate;
       padding: 16rem 2.5rem 8rem;
       max-width: 900px;
       margin: 0 auto;
       text-align: center;
     }
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(70px);
+      opacity: var(--glow-opacity);
+      background:
+        radial-gradient(circle at 18% 30%, var(--g-blue), transparent 55%),
+        radial-gradient(circle at 82% 18%, var(--g-purple), transparent 55%),
+        radial-gradient(circle at 50% 92%, var(--g-pink), transparent 55%);
+      transition: opacity 0.4s var(--ease);
+    }
     .hero-eyebrow {
       font-size: 0.68rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--accent);
       margin-bottom: 2rem;
     }
     .hero h1 {
       font-family: var(--font-display);
       font-size: clamp(2.8rem, 6vw, 5.2rem);
-      font-weight: 300;
+      font-weight: 600;
       line-height: 1.1;
       letter-spacing: -0.01em;
       margin-bottom: 1.8rem;
@@ -102,10 +175,11 @@
       margin: 0 auto 3rem;
     }
     .divider {
-      width: 48px; height: 1px;
-      background: var(--gold);
+      width: 56px; height: 3px;
+      border-radius: 999px;
+      background: var(--g-gradient);
       margin: 0 auto;
-      opacity: 0.6;
+      opacity: 0.9;
     }
 
     /* ── SECTION WRAPPER ── */
@@ -119,29 +193,42 @@
       font-size: 0.65rem;
       letter-spacing: 0.26em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--accent);
       margin-bottom: 3rem;
     }
 
     /* ── MODEL CARDS ── */
-    .models { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .models {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
     .model-card {
+      position: relative;
       background: var(--bg);
       padding: 2.5rem 2rem;
-      transition: background 0.3s var(--ease);
+      transition: background-color 0.3s var(--ease);
+    }
+    .model-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--g-gradient);
+      opacity: 0.85;
     }
     .model-card:hover { background: var(--bg-raised); }
     .model-tag {
       font-size: 0.62rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--accent);
       margin-bottom: 1.2rem;
     }
     .model-name {
       font-family: var(--font-display);
       font-size: 1.6rem;
-      font-weight: 300;
+      font-weight: 600;
       line-height: 1.2;
       margin-bottom: 1rem;
     }
@@ -192,24 +279,36 @@
       font-size: 0.6rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 0.2rem 0.55rem;
+      padding: 0.2rem 0.65rem;
       border: 1px solid var(--border);
-      border-radius: 2px;
+      border-radius: 999px;
     }
-    .rank-tag.gold { border-color: var(--gold); color: var(--gold); }
+    .rank-tag.gold {
+      border-color: var(--accent);
+      background: var(--g-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 600;
+    }
 
     /* ── TIPS ── */
-    .tips { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .tips {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
     .tip-card {
       background: var(--bg);
       padding: 2rem;
-      transition: background 0.3s var(--ease);
+      transition: background-color 0.3s var(--ease);
     }
     .tip-card:hover { background: var(--bg-raised); }
     .tip-title {
       font-family: var(--font-display);
       font-size: 1.1rem;
-      font-weight: 300;
+      font-weight: 600;
       margin-bottom: 0.75rem;
     }
     .tip-body {
@@ -220,10 +319,10 @@
     .tip-body code {
       font-family: 'SF Mono', 'Fira Code', monospace;
       font-size: 0.72rem;
-      color: var(--gold);
-      background: var(--gold-dim);
+      color: var(--accent);
+      background: var(--accent-dim);
       padding: 0.1em 0.35em;
-      border-radius: 2px;
+      border-radius: 4px;
     }
 
     /* ── SURVEY ── */
@@ -232,6 +331,10 @@
       background: var(--bg-raised);
       max-width: 680px;
       margin: 0 auto;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
     }
     .survey-header {
       padding: 2.5rem 2.5rem 0;
@@ -241,20 +344,20 @@
     .survey-header h2 {
       font-family: var(--font-display);
       font-size: 2rem;
-      font-weight: 300;
+      font-weight: 600;
       margin-bottom: 0.5rem;
     }
     .survey-header p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
 
     /* Progress */
     .survey-progress-bar {
-      height: 1px;
+      height: 4px;
       background: var(--border);
       position: relative;
     }
     .survey-progress-fill {
       height: 100%;
-      background: var(--gold);
+      background: var(--g-gradient);
       transition: width 0.5s var(--ease);
     }
 
@@ -273,7 +376,7 @@
     .step h3 {
       font-family: var(--font-display);
       font-size: 1.5rem;
-      font-weight: 300;
+      font-weight: 600;
       line-height: 1.35;
       margin-bottom: 2rem;
     }
@@ -288,8 +391,8 @@
       font-size: 0.8rem;
       line-height: 1.5;
       letter-spacing: 0.02em;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+      border-radius: 12px;
     }
     .opt-btn:hover {
       border-color: var(--border-hover);
@@ -297,9 +400,10 @@
       background: var(--bg-raised);
     }
     .opt-btn.selected {
-      border-color: var(--gold);
+      border-color: var(--accent);
       color: var(--text-primary);
-      background: var(--gold-dim);
+      background: var(--accent-dim);
+      box-shadow: 0 4px 16px -6px var(--accent-dim);
     }
 
     /* Nav buttons */
@@ -325,14 +429,14 @@
       font-size: 0.72rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--bg);
-      background: var(--gold);
+      color: #fff;
+      background: var(--g-gradient);
       padding: 0.7rem 1.8rem;
-      border-radius: 1px;
-      transition: opacity 0.2s;
+      border-radius: 999px;
+      transition: opacity 0.2s, transform 0.2s;
     }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-primary:disabled { opacity: 0.3; pointer-events: none; }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.3; pointer-events: none; transform: none; }
 
     /* ── RESULT ── */
     .result-wrap {
@@ -352,12 +456,15 @@
     .result-model {
       font-family: var(--font-display);
       font-size: 2.8rem;
-      font-weight: 300;
+      font-weight: 700;
       line-height: 1;
-      color: var(--text-primary);
+      background: var(--g-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       margin-bottom: 0.6rem;
     }
-    .result-divider { width: 40px; height: 1px; background: var(--gold); margin: 1.2rem 0; opacity: 0.7; }
+    .result-divider { width: 48px; height: 3px; border-radius: 999px; background: var(--g-gradient); margin: 1.2rem 0; opacity: 0.9; }
     .result-reason {
       font-size: 0.82rem;
       line-height: 1.8;
@@ -370,8 +477,8 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       border: 1px solid var(--border);
-      padding: 0.25rem 0.7rem;
-      border-radius: 2px;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
       color: var(--text-muted);
     }
     .btn-retry {
@@ -400,7 +507,7 @@
       font-size: 0.7rem;
       letter-spacing: 0.12em;
       color: var(--text-muted);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-style: italic;
     }
     .footer-right {
@@ -458,10 +565,20 @@
       <a href="#tips">Workflow</a>
       <a href="#survey">Find Yours</a>
     </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
   </nav>
 
   <!-- HERO -->
   <header class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
     <p class="hero-eyebrow">The Definitive Guide</p>
     <h1>Choose the right model.<br><em>Every time.</em></h1>
     <p class="hero-sub">Three models. Distinct strengths. This guide tells you exactly which to reach for — and when switching costs you.</p>
@@ -802,6 +919,30 @@ function showResult() {
 
 /* init */
 showStep(1);
+</script>
+
+<script>
+'use strict';
+
+/* ── THEME TOGGLE (separate from survey logic above) ── */
+(function () {
+  const root = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    root.style.colorScheme = theme;
+    toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+
+  // Sync the colorScheme style with whatever the early head script picked
+  applyTheme(root.getAttribute('data-theme') || 'light');
+
+  toggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  });
+})();
 </script>
 
 </body>
