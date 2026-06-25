@@ -3,30 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Task Mastery — 2026 Framework</title>
+  <title>AI Task Mastery — 2026 Operational Framework</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    /* Theme initial state synchronization */
+    (function () {
+      const stored = localStorage.getItem('mastery-theme');
+      const preferred = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', stored || preferred);
+    })();
+  </script>
 
   <style>
-    /* ── TOKENS ── */
+    /* ── DESIGN TOKENS ── */
     :root {
-      --bg:           #111110;
-      --bg-raised:    #181817;
-      --bg-step:      #141413;
-      --border:       rgba(255,255,255,0.07);
-      --text-primary: #F2EFE8;
-      --text-muted:   #7A7872;
-      --text-dim:     #3E3C39;
-      --gold:         #C9A84C;
-      --gold-dim:     rgba(201,168,76,0.12);
       --font-display: 'Cormorant Garamond', Georgia, serif;
-      --font-body:    'Inter', system-ui, sans-serif;
-      --ease:         cubic-bezier(0.22, 1, 0.36, 1);
-      --nav-h:        64px;
+      --font-ui: 'Sora', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --nav-h: 70px;
+
+      /* Model Branding Brand Colors */
+      --color-openai: #10A37F;
+      --color-openai-dim: rgba(16, 163, 127, 0.08);
+      --color-gemini: #4285F4;
+      --color-gemini-dim: rgba(66, 133, 244, 0.08);
+      --color-claude: #D97706;
+      --color-claude-dim: rgba(217, 119, 6, 0.08);
+      --color-notebooklm: #00838F;
+      --color-notebooklm-dim: rgba(0, 131, 143, 0.08);
+
+      /* Glow background elements */
+      --g-gradient: linear-gradient(90deg, var(--color-gemini), var(--color-openai), var(--color-claude));
+
+      /* Light Theme (Default) */
+      --bg: #F8FAFC;
+      --bg-raised: #FFFFFF;
+      --bg-translucent: rgba(248, 250, 252, 0.85);
+      --border: rgba(15, 23, 42, 0.08);
+      --border-hover: rgba(15, 23, 42, 0.16);
+      --text-primary: #0F172A;
+      --text-muted: #475569;
+      --text-dim: #94A3B8;
+      --accent: #3b82f6;
+      --glow-opacity: 0.15;
+      --shadow: 0 1px 3px 0 rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.03);
     }
 
-    /* ── RESET ── */
+    html[data-theme="dark"] {
+      /* Dark Theme */
+      --bg: #09090B;
+      --bg-raised: #121214;
+      --bg-translucent: rgba(9, 9, 11, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.18);
+      --text-primary: #FAFAFA;
+      --text-muted: #A1A1AA;
+      --text-dim: #52525B;
+      --accent: #60a5fa;
+      --glow-opacity: 0.28;
+      --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ── BASE RESET ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; scroll-behavior: smooth; }
     body {
@@ -37,167 +80,284 @@
       min-height: 100dvh;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
     }
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    /* ── NAV ── */
+    /* ── CONTAINER ── */
+    .app-container { display: flex; flex-direction: column; min-height: 100dvh; }
+
+    /* ── NAVIGATION ── */
     .topnav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       height: var(--nav-h);
       padding: 0 2.5rem;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: var(--bg);
+      background: var(--bg-translucent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease);
     }
+    .nav-left { display: flex; align-items: center; gap: 0.75rem; }
     .nav-logo {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-weight: 300;
-      letter-spacing: 0.2em;
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
+      background: var(--g-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-version {
+      font-size: 0.58rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .nav-actions { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links { display: flex; gap: 1.5rem; }
     .nav-link {
       font-size: 0.68rem;
-      letter-spacing: 0.14em;
+      font-family: var(--font-ui);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-muted);
       transition: color 0.2s;
     }
     .nav-link:hover { color: var(--text-primary); }
-    .nav-link-active {
-      color: var(--gold);
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
 
-    /* ── HERO ── */
-    .hero {
-      padding-top: calc(var(--nav-h) + 7rem);
-      padding-bottom: 6rem;
-      padding-left: 2.5rem;
-      padding-right: 2.5rem;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .hero-eyebrow {
-      font-size: 0.63rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 2rem;
-    }
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.8rem, 6vw, 5rem);
-      font-weight: 300;
-      line-height: 1.08;
-      margin-bottom: 1.8rem;
-    }
-    .hero h1 em { font-style: italic; color: var(--text-muted); }
-    .hero-sub {
-      font-size: 0.88rem;
-      line-height: 1.85;
-      color: var(--text-muted);
-      max-width: 520px;
-      margin: 0 auto 3.5rem;
-    }
-
-    /* Progress map */
-    .progress-map {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    .pm-step {
-      display: flex; align-items: center; gap: 0;
-      cursor: pointer;
-    }
-    .pm-node {
-      width: 28px; height: 28px;
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 36px; height: 36px;
       border-radius: 50%;
       border: 1px solid var(--border);
       background: var(--bg-raised);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.58rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-      transition: all 0.25s var(--ease);
-      flex-shrink: 0;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, background-color 0.3s var(--ease);
     }
-    .pm-step:hover .pm-node {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: var(--gold-dim);
+    .theme-toggle:hover { border-color: var(--border-hover); }
+    .theme-toggle svg { width: 16px; height: 16px; display: none; }
+    html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+    html[data-theme="dark"]  .theme-toggle .icon-sun  { display: block; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      padding-top: calc(var(--nav-h) + 6rem);
+      padding-bottom: 5rem;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(80px);
+      opacity: var(--glow-opacity);
+      background:
+        radial-gradient(circle at 15% 30%, var(--color-gemini), transparent 60%),
+        radial-gradient(circle at 85% 20%, var(--color-openai), transparent 60%),
+        radial-gradient(circle at 50% 85%, var(--color-claude), transparent 60%);
+      transition: opacity 0.4s var(--ease);
+    }
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      font-family: var(--font-ui);
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+    .hero h1 em { font-style: italic; color: var(--text-dim); }
+    .hero-sub {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 3rem;
+    }
+
+    /* Progress Map Widget */
+    .progress-map {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .pm-step { display: flex; align-items: center; }
+    .pm-node {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.25s var(--ease);
+      cursor: pointer;
+    }
+    .pm-node:hover {
+      border-color: var(--node-color);
+      color: var(--node-color);
+      box-shadow: 0 0 10px var(--node-color-dim);
+    }
+    .pm-node.active {
+      border-color: var(--node-color);
+      background: var(--node-color);
+      color: #FFF !important;
+      box-shadow: 0 0 12px var(--node-color);
     }
     .pm-line {
-      width: 32px; height: 1px;
+      width: 24px; height: 2px;
       background: var(--border);
-      flex-shrink: 0;
+      transition: background-color 0.25s;
     }
-    .pm-label {
-      display: none; /* only shown on hover via JS tooltip */
-    }
-
+    .pm-line.active { background: var(--line-color); }
     .map-hint {
-      font-size: 0.6rem;
-      letter-spacing: 0.16em;
+      font-size: 0.58rem;
+      font-family: var(--font-ui);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-dim);
-      margin-bottom: 3rem;
+      margin-top: 0.75rem;
     }
 
-    .divider {
-      width: 48px; height: 1px;
-      background: var(--gold);
-      margin: 0 auto;
-      opacity: 0.5;
+    /* ── FILTERS ── */
+    .filter-wrapper {
+      margin-top: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .filter-label {
+      font-size: 0.58rem;
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .filter-btn {
+      padding: 0.4rem 1rem;
+      font-size: 0.62rem;
+      font-family: var(--font-ui);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      background: var(--bg-raised);
+      transition: all 0.2s var(--ease);
+    }
+    .filter-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+    .filter-btn.active {
+      background: var(--btn-color, var(--text-primary));
+      border-color: var(--btn-color, var(--text-primary));
+      color: #FFF;
+      box-shadow: 0 4px 12px -2px var(--btn-shadow, rgba(0,0,0,0.1));
     }
 
-    /* ── STEPS ── */
+    /* ── STEPS MAIN CONTENT ── */
     .steps-container {
       max-width: 1000px;
+      width: 100%;
       margin: 0 auto;
-      padding: 4rem 2.5rem 2rem;
+      padding: 2rem 2.5rem;
+    }
+    .steps-header-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
     }
     .steps-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.28em;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1px;
+      color: var(--accent);
+    }
+    .steps-count-total {
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
 
     /* Individual step row */
     .step-row {
       border: 1px solid var(--border);
-      border-top: none;
-      background: var(--bg-step);
+      border-radius: 16px;
+      background: var(--bg-raised);
       display: grid;
       grid-template-columns: 100px 1fr;
       position: relative;
       overflow: hidden;
-      transition: background 0.3s var(--ease);
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+      transition: border-color 0.3s, background-color 0.3s var(--ease), opacity 0.4s var(--ease), transform 0.4s var(--ease);
     }
-    .step-row:first-of-type { border-top: 1px solid var(--border); }
+    .step-row.filtered-out {
+      opacity: 0.15;
+      pointer-events: none;
+      transform: scale(0.98);
+    }
     .step-row::before {
       content: '';
       position: absolute;
       left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--step-color, var(--gold));
-      opacity: 0;
-      transition: opacity 0.3s;
+      width: 4px;
+      background: var(--step-color, var(--accent));
+      opacity: 0.85;
     }
-    .step-row:hover { background: var(--bg-raised); }
-    .step-row:hover::before { opacity: 1; }
+    .step-row:hover {
+      border-color: rgba(var(--step-color-rgb, 59, 130, 246), 0.4);
+    }
 
     /* Step number column */
     .step-num-col {
@@ -205,159 +365,177 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 2.5rem 1rem 2.5rem;
+      padding: 2.5rem 1rem;
+      background: rgba(var(--step-color-rgb, 59, 130, 246), 0.02);
     }
     .step-num-display {
       font-family: var(--font-display);
       font-size: 4.5rem;
       font-weight: 300;
       font-style: italic;
-      color: var(--text-dim);
+      color: var(--step-color, var(--text-dim));
       line-height: 1;
-      letter-spacing: -0.02em;
+      opacity: 0.25;
       user-select: none;
-      transition: color 0.3s;
+      transition: opacity 0.3s;
     }
-    .step-row:hover .step-num-display { color: var(--step-color, var(--gold)); opacity: 0.4; }
+    .step-row:hover .step-num-display { opacity: 0.75; }
 
     /* Step content */
-    .step-content { padding: 2.5rem 2rem 2.5rem 2rem; }
+    .step-content { padding: 2.5rem; }
 
     .step-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.2rem;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
-    .step-title-group {}
     .step-phase {
       font-size: 0.58rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 0.4rem;
+      color: var(--step-color);
+      margin-bottom: 0.5rem;
     }
     .step-title {
-      font-family: var(--font-display);
-      font-size: 1.55rem;
-      font-weight: 300;
-      line-height: 1.2;
+      font-family: var(--font-ui);
+      font-size: 1.45rem;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
     }
-    .step-title em { font-style: italic; color: var(--text-muted); }
+    .step-title em { font-family: var(--font-display); font-style: italic; font-weight: 300; color: var(--text-muted); }
 
-    /* AI recommendation pill(s) */
+    /* AI pills */
     .step-ai-pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
-      flex-shrink: 0;
-      align-items: flex-start;
-      padding-top: 0.1rem;
+      gap: 0.5rem;
     }
     .ai-pill {
       display: flex; align-items: center; gap: 0.4rem;
-      padding: 0.35rem 0.75rem;
-      border: 1px solid var(--step-color, var(--gold));
-      border-radius: 2px;
-      background: transparent;
-      white-space: nowrap;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--pill-color);
+      background: var(--pill-bg);
+      border-radius: 999px;
     }
     .ai-pill-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--step-color, var(--gold));
-      flex-shrink: 0;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--pill-color);
     }
     .ai-pill-text {
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
+      font-size: 0.6rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--text-primary);
     }
 
-    /* Step body text */
+    /* Core step description */
     .step-body {
-      font-size: 0.82rem;
-      line-height: 1.85;
+      font-size: 0.85rem;
+      line-height: 1.8;
       color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      max-width: 680px;
+      margin-bottom: 2rem;
+      max-width: 720px;
     }
+    .step-body strong { color: var(--text-primary); font-weight: 500; }
 
-    /* Technique cards inside a step */
+    /* Techniques layout */
+    .step-tech-title {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
     .step-techniques {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
-      margin-top: 1rem;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
     }
     .technique-card {
-      background: var(--bg);
-      padding: 1.2rem 1.3rem;
-      transition: background 0.2s;
+      background: var(--bg-raised);
+      padding: 1.25rem;
+      transition: background-color 0.2s;
     }
-    .technique-card:hover { background: rgba(255,255,255,0.02); }
-    .technique-icon {
-      font-size: 1rem;
+    .technique-card:hover { background: var(--bg); }
+    .technique-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       margin-bottom: 0.5rem;
-      display: block;
     }
+    .technique-icon { font-size: 1rem; }
     .technique-name {
-      font-size: 0.72rem;
-      font-weight: 500;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 0.35rem;
-      letter-spacing: 0.02em;
     }
     .technique-desc {
-      font-size: 0.69rem;
-      line-height: 1.65;
+      font-size: 0.72rem;
+      line-height: 1.6;
       color: var(--text-muted);
     }
     .technique-desc code {
       font-family: 'SF Mono', 'Fira Code', monospace;
       font-size: 0.65rem;
-      color: var(--gold);
-      background: var(--gold-dim);
+      color: var(--step-color);
+      background: rgba(var(--step-color-rgb), 0.08);
       padding: 0.1em 0.3em;
-      border-radius: 2px;
+      border-radius: 4px;
     }
 
-    /* Why callout */
+    /* Why Section Callout */
     .step-why {
-      margin-top: 1.2rem;
-      padding: 1rem 1.2rem;
-      border-left: 2px solid var(--step-color, var(--gold));
-      background: rgba(0,0,0,0.2);
+      padding: 1.2rem 1.5rem;
+      border-left: 2px solid var(--step-color);
+      background: rgba(var(--step-color-rgb), 0.03);
+      border-radius: 0 12px 12px 0;
     }
     .step-why-label {
+      font-family: var(--font-ui);
       font-size: 0.58rem;
-      letter-spacing: 0.2em;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--step-color, var(--gold));
-      margin-bottom: 0.4rem;
+      color: var(--step-color);
+      margin-bottom: 0.35rem;
     }
     .step-why-text {
-      font-size: 0.77rem;
-      line-height: 1.75;
+      font-size: 0.75rem;
+      line-height: 1.7;
       color: var(--text-muted);
     }
 
-    /* ── SUMMARY STRIP ── */
+    /* ── SUMMARY AT A GLANCE ── */
     .summary-strip {
       max-width: 1000px;
+      width: 100%;
       margin: 0 auto;
-      padding: 4rem 2.5rem;
+      padding: 3rem 2.5rem;
     }
     .summary-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.26em;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 2rem;
     }
     .summary-grid {
       display: grid;
@@ -365,43 +543,52 @@
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
     }
     .summary-cell {
-      background: var(--bg-step);
+      background: var(--bg-raised);
       padding: 1.5rem 1rem;
       text-align: center;
-      border-top: 3px solid var(--cell-color, var(--border));
-      transition: background 0.25s;
-      cursor: default;
+      border-top: 3px solid var(--cell-color);
+      transition: background-color 0.25s, transform 0.25s;
+      cursor: pointer;
     }
-    .summary-cell:hover { background: var(--bg-raised); }
+    .summary-cell:hover {
+      background: var(--bg);
+      transform: translateY(-2px);
+    }
     .summary-cell-num {
       font-family: var(--font-display);
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 300;
       font-style: italic;
-      color: var(--cell-color, var(--text-dim));
+      color: var(--cell-color);
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
     .summary-cell-name {
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
+      font-family: var(--font-ui);
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: var(--text-muted);
-      line-height: 1.4;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
     }
     .summary-cell-ai {
-      font-size: 0.58rem;
-      color: var(--text-dim);
-      margin-top: 0.5rem;
-      line-height: 1.5;
+      font-size: 0.55rem;
+      color: var(--text-muted);
     }
 
     /* ── FOOTER ── */
     footer {
+      margin-top: auto;
       padding: 3rem 2.5rem;
       border-top: 1px solid var(--border);
+      background: var(--bg-raised);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -410,31 +597,37 @@
     .footer-left {
       font-family: var(--font-display);
       font-style: italic;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
     }
     .footer-right {
-      font-size: 0.63rem;
-      letter-spacing: 0.14em;
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-dim);
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 780px) {
-      .step-row { grid-template-columns: 60px 1fr; }
-      .step-num-display { font-size: 3rem; }
-      .step-num-col { padding: 2rem 0.5rem; }
-      .step-content { padding: 2rem 1.4rem; }
-      .step-header { flex-direction: column; }
+    /* ── RESPONSIVE ADAPTATIONS ── */
+    @media (max-width: 860px) {
+      .step-row { grid-template-columns: 1fr; }
+      .step-num-col {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 1rem;
+        justify-content: flex-start;
+      }
+      .step-num-display { font-size: 2.8rem; }
+      .step-content { padding: 1.5rem; }
       .summary-grid { grid-template-columns: repeat(4, 1fr); }
-      .topnav { padding: 0 1.4rem; }
-      .steps-container, .summary-strip, .hero { padding-left: 1.4rem; padding-right: 1.4rem; }
-      footer { padding: 2rem 1.4rem; flex-direction: column; align-items: flex-start; }
+      .topnav { padding: 0 1.5rem; }
+      .hero { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .steps-container, .summary-strip { padding-left: 1.5rem; padding-right: 1.5rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
     }
-    @media (max-width: 480px) {
-      .nav-links { gap: 1rem; }
-      .hero h1 { font-size: 2.5rem; }
+    @media (max-width: 580px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2.2rem; }
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
       .step-techniques { grid-template-columns: 1fr; }
     }
@@ -445,471 +638,680 @@
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="topnav">
-  <div class="nav-logo">AI Guide</div>
-  <div class="nav-links">
-    <span class="nav-link-active">Framework</span>
-    <a class="nav-link" href="ai-guide.html">← Home</a>
-  </div>
-</nav>
+<div class="app-container">
 
-<!-- HERO -->
-<header class="hero">
-  <p class="hero-eyebrow">2026 · AI Task Mastery</p>
-  <h1>From prompt to<br><em>operating system.</em></h1>
-  <p class="hero-sub">Seven steps to stop using AI as a chatbot and start running it as the intelligent infrastructure behind everything you do.</p>
-
-  <!-- Step progress map -->
-  <div class="progress-map" id="progressMap">
-    <!-- injected by JS -->
-  </div>
-  <p class="map-hint">Click any step to jump</p>
-
-  <div class="divider"></div>
-</header>
-
-<!-- STEPS -->
-<main class="steps-container">
-  <p class="steps-label">The Framework</p>
-
-  <!-- STEP 1 -->
-  <div class="step-row" id="step-1" style="--step-color:#C9A84C;">
-    <div class="step-num-col"><span class="step-num-display">1</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Foundation</p>
-          <h2 class="step-title">Identity Architecture<br><em>The Digital Clone</em></h2>
-        </div>
-        <div class="step-ai-pills" style="--step-color:#10A37F;">
-          <div class="ai-pill" style="border-color:#10A37F;">
-            <div class="ai-pill-dot" style="background:#10A37F;"></div>
-            <span class="ai-pill-text">GPT-5.5 Instant</span>
-          </div>
-          <div class="ai-pill" style="border-color:#4285F4;">
-            <div class="ai-pill-dot" style="background:#4285F4;"></div>
-            <span class="ai-pill-text">Gemini 3.1 Pro</span>
-          </div>
-        </div>
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-left">
+      <div class="nav-logo">AI Master System</div>
+      <span class="nav-version">2026</span>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-links">
+        <a class="nav-link" href="#models-overview">Overview</a>
+        <a class="nav-link" href="#step-1">Framework</a>
       </div>
-      <p class="step-body">Before any task, build your foundation. The AI must answer through your personal lens — not a generic one. This step produces three files that persist across every session you ever run.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">📄</span>
-          <div class="technique-name">user.md</div>
-          <div class="technique-desc">Your role, domain, and working principles. Tells the AI who you are professionally.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🧬</span>
-          <div class="technique-name">soul.md</div>
-          <div class="technique-desc">Your voice, values, and communication style. Keeps output sounding like you — not like AI.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🎯</span>
-          <div class="technique-name">identity.md</div>
-          <div class="technique-desc">Who the AI is <em>to you</em>. Define it as "Chief of Staff," "Research Partner," or whatever fits your workflow.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🎙️</span>
-          <div class="technique-name">The Interview Method</div>
-          <div class="technique-desc">Unsure what to write? Ask GPT-5.5 to <em>interview you</em> about your values, then have it draft all three files from your answers.</div>
-        </div>
-      </div>
-      <div class="step-why">
-        <p class="step-why-label">Why GPT-5.5 or Gemini Pro</p>
-        <p class="step-why-text">GPT-5.5 Instant's interview capability extracts your identity through dialogue. Alternatively, Gemini 3.1 Pro's "Personal Intelligence" setting persists these preferences across all connected Google apps automatically.</p>
+      <!-- Theme Switcher -->
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle interface theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <p class="hero-eyebrow">A Unified 2026 Methodology</p>
+    <h1>From basic prompting<br>to an <em>intelligent system.</em></h1>
+    <p class="hero-sub">Seven logical phases to transition your work away from unguided chat panels toward a highly persistent, automated local operating engine.</p>
+
+    <!-- Map Progress Widget -->
+    <div class="progress-map" id="progressMap">
+      <!-- Generated programmatically via script -->
+    </div>
+    <p class="map-hint">Click a phase to navigate</p>
+
+    <!-- Model filter category buttons -->
+    <div class="filter-wrapper" id="models-overview">
+      <p class="filter-label">Highlight Steps by Model Integration</p>
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">Show All</button>
+        <button class="filter-btn" data-filter="openai" style="--btn-color: var(--color-openai); --btn-shadow: var(--color-openai-dim);">OpenAI</button>
+        <button class="filter-btn" data-filter="gemini" style="--btn-color: var(--color-gemini); --btn-shadow: var(--color-gemini-dim);">Gemini</button>
+        <button class="filter-btn" data-filter="claude" style="--btn-color: var(--color-claude); --btn-shadow: var(--color-claude-dim);">Claude</button>
+        <button class="filter-btn" data-filter="notebooklm" style="--btn-color: var(--color-notebooklm); --btn-shadow: var(--color-notebooklm-dim);">NotebookLM</button>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- STEP 2 -->
-  <div class="step-row" id="step-2" style="--step-color:#4285F4;">
-    <div class="step-num-col"><span class="step-num-display">2</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Input</p>
-          <h2 class="step-title">Curated Scoping<br><em>The Curate Pillar</em></h2>
-        </div>
-        <div class="step-ai-pills" style="--step-color:#4285F4;">
-          <div class="ai-pill" style="border-color:#4285F4;">
-            <div class="ai-pill-dot" style="background:#4285F4;"></div>
-            <span class="ai-pill-text">NotebookLM</span>
+  <!-- 7-STEP GUIDE -->
+  <main class="steps-container">
+    <div class="steps-header-meta">
+      <p class="steps-label">System Architecture</p>
+      <span class="steps-count-total">7 Strategic Phases</span>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="step-row" id="step-1" data-models="openai gemini" style="--step-color: var(--color-openai); --step-color-rgb: 16, 163, 127;">
+      <div class="step-num-col">
+        <span class="step-num-display">1</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 01 — Foundation</p>
+            <h2 class="step-title">Identity Architecture<br><em>The Persona Blueprint</em></h2>
           </div>
-          <div class="ai-pill" style="border-color:#4285F4;">
-            <div class="ai-pill-dot" style="background:#4285F4;"></div>
-            <span class="ai-pill-text">Gemini 3.1 Pro</span>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-openai); --pill-bg: var(--color-openai-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">GPT-5.5 Instant</span>
+            </div>
+            <div class="ai-pill" style="--pill-color: var(--color-gemini); --pill-bg: var(--color-gemini-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Gemini 3.1 Pro</span>
+            </div>
           </div>
         </div>
-      </div>
-      <p class="step-body">Garbage in, garbage out. The biggest mistake is dumping unvetted sources into an AI. Step 2 creates a clean, trusted knowledge base before a single line of execution begins.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">📚</span>
-          <div class="technique-name">Vet Your Sources</div>
-          <div class="technique-desc">Only upload links, PDFs, or videos from authors you trust. NotebookLM becomes your hallucination-free knowledge base.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">📋</span>
-          <div class="technique-name">Planning Mode PRD</div>
-          <div class="technique-desc">Use Gemini 3.1 Pro in Planning Mode to produce a detailed <strong>Product Requirements Document</strong> before any execution starts.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🔍</span>
-          <div class="technique-name">Blind Spot Scan</div>
-          <div class="technique-desc">Prompt: <em>"Based on these sources, what important subtopics are missing? Do not invent details."</em> Closes gaps before they become errors.</div>
-        </div>
-      </div>
-      <div class="step-why">
-        <p class="step-why-label">Why NotebookLM + Gemini Pro</p>
-        <p class="step-why-text">NotebookLM grounds every answer in your verified sources. Gemini Pro's Planning Mode then turns that clean knowledge into a structured PRD — a reusable blueprint for everything in steps 3–7.</p>
-      </div>
-    </div>
-  </div>
+        <p class="step-body">
+          Replace generic default system responses with highly aligned thinking. Establish <strong>three key identity profile files</strong> that persist over all working conversational sessions.
+        </p>
 
-  <!-- STEP 3 -->
-  <div class="step-row" id="step-3" style="--step-color:#10A37F;">
-    <div class="step-num-col"><span class="step-num-display">3</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Brainstorm</p>
-          <h2 class="step-title">Psychological Modeling<br><em>Interactive Scaffolding</em></h2>
-        </div>
-        <div class="step-ai-pills">
-          <div class="ai-pill" style="border-color:#4285F4;">
-            <div class="ai-pill-dot" style="background:#4285F4;"></div>
-            <span class="ai-pill-text">Gemini Canvas</span>
+        <p class="step-tech-title">System Templates</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">📄</span>
+              <span class="technique-name">user.md</span>
+            </div>
+            <p class="technique-desc">Defines your background, precise industry expertise, and hard operational rules.</p>
           </div>
-          <div class="ai-pill" style="border-color:#10A37F;">
-            <div class="ai-pill-dot" style="background:#10A37F;"></div>
-            <span class="ai-pill-text">GPT-5.5 Thinking</span>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🧬</span>
+              <span class="technique-name">soul.md</span>
+            </div>
+            <p class="technique-desc">Locks in voice pacing, strict communication formats, and rules limiting fluff words.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🎯</span>
+              <span class="technique-name">identity.md</span>
+            </div>
+            <p class="technique-desc">Forces the assistant's clear duty profile, like assigning a <code>Chief of Staff</code> role.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🎙️</span>
+              <span class="technique-name">Interview Method</span>
+            </div>
+            <p class="technique-desc">Prompt your model to interview you, then build your system templates from those replies.</p>
           </div>
         </div>
-      </div>
-      <p class="step-body">Move your raw ideas into an interactive workspace. The goal here is to make it structurally difficult for the AI to deviate from your logic and voice.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">🖼️</span>
-          <div class="technique-name">Canvas Environment</div>
-          <div class="technique-desc">Gemini's Canvas lets you highlight any section and give live directives: "be firmer here," "more persuasive," "cut this." Real-time sculpting, not re-prompting.</div>
+
+        <div class="step-why">
+          <p class="step-why-label">Context Strategy</p>
+          <p class="step-why-text">Leverage conversational models to auto-generate system files, and persist these parameters globally across Google Workspaces via Gemini's native Personal Settings.</p>
         </div>
-        <div class="technique-card">
-          <span class="technique-icon">🧠</span>
-          <div class="technique-name">Board of Advisors</div>
-          <div class="technique-desc">Tell the AI to embody a mastermind of people who've achieved your specific goal. Steve Jobs for design decisions. MrBeast for hooks. Specific personas beat generic instructions.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">📐</span>
-          <div class="technique-name">PSL Framework</div>
-          <div class="technique-desc">Ask GPT-5.5 Thinking to reformat your ideas into <strong>Point, Story, Lesson</strong>. Every output gets a clear takeaway — no more rambling.</div>
-        </div>
-      </div>
-      <div class="step-why">
-        <p class="step-why-label">Why Gemini Canvas + GPT-5.5 Thinking</p>
-        <p class="step-why-text">Canvas gives you surgical control over tone and emphasis in real time. GPT-5.5 Thinking applies structured reasoning to reformat your brainstorm into airtight output frameworks — the two together turn messy thinking into clean execution-ready material.</p>
       </div>
     </div>
-  </div>
 
-  <!-- STEP 4 -->
-  <div class="step-row" id="step-4" style="--step-color:#C9A84C;">
-    <div class="step-num-col"><span class="step-num-display">4</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Execution</p>
-          <h2 class="step-title">Agentic Skills<br><em>Deep Execution</em></h2>
-        </div>
-        <div class="step-ai-pills">
-          <div class="ai-pill" style="border-color:#4285F4;">
-            <div class="ai-pill-dot" style="background:#4285F4;"></div>
-            <span class="ai-pill-text">NotebookLM</span>
+    <!-- PHASE 2 -->
+    <div class="step-row" id="step-2" data-models="notebooklm gemini" style="--step-color: var(--color-gemini); --step-color-rgb: 66, 133, 244;">
+      <div class="step-num-col">
+        <span class="step-num-display">2</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 02 — Input</p>
+            <h2 class="step-title">Curated Scoping<br><em>Airtight Pre-Execution</em></h2>
           </div>
-          <div class="ai-pill" style="border-color:#C9A84C;">
-            <div class="ai-pill-dot" style="background:#C9A84C;"></div>
-            <span class="ai-pill-text">Claude Opus 4.8</span>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-notebooklm); --pill-bg: var(--color-notebooklm-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">NotebookLM</span>
+            </div>
+            <div class="ai-pill" style="--pill-color: var(--color-gemini); --pill-bg: var(--color-gemini-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Gemini 3.1 Pro</span>
+            </div>
           </div>
         </div>
-      </div>
-      <p class="step-body">This is the premier 2026 workflow. Transition from manual prompting to automated pipelines. NotebookLM holds the facts. Claude executes the tasks — at massive scale, in parallel.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">⚡</span>
-          <div class="technique-name">The Duo Strategy</div>
-          <div class="technique-desc">NotebookLM as your hallucination-free knowledge base. Claude Skills as your execution engine. Never conflate the two roles.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🤖</span>
-          <div class="technique-name">Parallel Sub-Agents</div>
-          <div class="technique-desc">Use Claude Code to spin up parallel agents via Dynamic Workflows. Each agent targets a different angle — logic, style, performance — simultaneously.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">⏰</span>
-          <div class="technique-name">Scheduled Actions</div>
-          <div class="technique-desc">Set background tasks to run research or audits on a schedule. Long-term goals run while you sleep.</div>
-        </div>
-      </div>
-      <div class="step-why">
-        <p class="step-why-label">Why Claude Opus 4.8</p>
-        <p class="step-why-text">Opus 4.8's Dynamic Workflows via Claude Code can orchestrate hundreds of parallel sub-agents that plan, execute, and verify work simultaneously — no other model in the 2026 lineup matches this for complex engineering or data tasks.</p>
-      </div>
-    </div>
-  </div>
+        <p class="step-body">
+          Eliminate AI hallucination before initiating tasks. Feed targeted, trusted sources into a closed knowledge vault to construct a reliable framework.
+        </p>
 
-  <!-- STEP 5 -->
-  <div class="step-row" id="step-5" style="--step-color:#A8A8A8;">
-    <div class="step-num-col"><span class="step-num-display">5</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Refinement</p>
-          <h2 class="step-title">Stylistic Cloning<br><em>Logic Linking</em></h2>
-        </div>
-        <div class="step-ai-pills">
-          <div class="ai-pill" style="border-color:#C9A84C;">
-            <div class="ai-pill-dot" style="background:#C9A84C;"></div>
-            <span class="ai-pill-text">Claude Fable 5</span>
+        <p class="step-tech-title">Sourcing Techniques</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">📚</span>
+              <span class="technique-name">Vetted Ingest</span>
+            </div>
+            <p class="technique-desc">Upload verified references exclusively into isolated folders to isolate sources.</p>
           </div>
-          <div class="ai-pill" style="border-color:#C9A84C;">
-            <div class="ai-pill-dot" style="background:#C9A84C;"></div>
-            <span class="ai-pill-text">Opus 4.8 X-High</span>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">📋</span>
+              <span class="technique-name">Planning PRD</span>
+            </div>
+            <p class="technique-desc">Use planning prompts to create clear blueprints defining the task ahead.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🔍</span>
+              <span class="technique-name">Blind-Spot Scan</span>
+            </div>
+            <p class="technique-desc">Query sources: <code>"What core subtopics are omitted from these uploads?"</code> to plug knowledge gaps.</p>
           </div>
         </div>
-      </div>
-      <p class="step-body">Refine the look, feel, and logic of every output until it sounds and reasons exactly like the best version of your work. This step is about precision — not production.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">✍️</span>
-          <div class="technique-name">Style Analysis</div>
-          <div class="technique-desc">Give Claude a piece of content you love and prompt: <em>"Analyze the tone, cadence, and logic links. Create a Style Guide Artifact from this."</em></div>
+
+        <div class="step-why">
+          <p class="step-why-label">Sourcing Strategy</p>
+          <p class="step-why-text">NotebookLM restricts reasoning exclusively to uploaded files, while Gemini's strategic planning features convert that grounded base into clear structures for subsequent execution phases.</p>
         </div>
-        <div class="technique-card">
-          <span class="technique-icon">🔗</span>
-          <div class="technique-name">X-High Reasoning</div>
-          <div class="technique-desc">Toggle X-High Reasoning on Claude Opus 4.8 to force deeper logical iteration and proactive self-correction before the final output is shown.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🌟</span>
-          <div class="technique-name">Adaptive Thinking</div>
-          <div class="technique-desc">Claude Fable 5 features always-on adaptive thinking — the model determines its own reasoning depth. Use it when accuracy is non-negotiable.</div>
-        </div>
-      </div>
-      <div class="step-why">
-        <p class="step-why-label">Why Claude Fable 5 or Opus 4.8</p>
-        <p class="step-why-text">Fable 5 is Anthropic's most capable model with always-on adaptive thinking. Opus 4.8 with X-High Reasoning forces the model into deeper logical iteration — use either when the cost of a wrong answer is high.</p>
       </div>
     </div>
-  </div>
 
-  <!-- STEP 6 -->
-  <div class="step-row" id="step-6" style="--step-color:#7A7872;">
-    <div class="step-num-col"><span class="step-num-display">6</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Finalization</p>
-          <h2 class="step-title">Token Optimization<br><em>Hot-Swapping</em></h2>
-        </div>
-        <div class="step-ai-pills">
-          <div class="ai-pill" style="border-color:#C9A84C;">
-            <div class="ai-pill-dot" style="background:#C9A84C;"></div>
-            <span class="ai-pill-text">Claude Haiku 4.5</span>
+    <!-- PHASE 3 -->
+    <div class="step-row" id="step-3" data-models="gemini openai" style="--step-color: var(--color-openai); --step-color-rgb: 16, 163, 127;">
+      <div class="step-num-col">
+        <span class="step-num-display">3</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 03 — Brainstorm</p>
+            <h2 class="step-title">Psychological Modeling<br><em>Interactive Scaffolding</em></h2>
           </div>
-          <div class="ai-pill" style="border-color:#4285F4;">
-            <div class="ai-pill-dot" style="background:#4285F4;"></div>
-            <span class="ai-pill-text">Gemini Pro Fast</span>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-gemini); --pill-bg: var(--color-gemini-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Gemini Canvas</span>
+            </div>
+            <div class="ai-pill" style="--pill-color: var(--color-openai); --pill-bg: var(--color-openai-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">GPT-5.5 Thinking</span>
+            </div>
           </div>
         </div>
-      </div>
-      <p class="step-body">Don't burn Opus-level tokens on tasks that don't need them. The final mile is about cost-efficiency — swap to lighter models, preserve your reasoning budget for what matters.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">🔄</span>
-          <div class="technique-name">Model Hot-Swap</div>
-          <div class="technique-desc">Once strategic decisions are locked, switch to Haiku 4.5 or Gemini Fast Mode for formatting, translation, and copyediting. Near-frontier output at a fraction of the cost.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🚫</span>
-          <div class="technique-name">.geminiignore</div>
-          <div class="technique-desc">Create an ignore file to tell the model which assets to skip — images, logs, heavy data. Saves significant context window space on large projects.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">💾</span>
-          <div class="technique-name">Convert to Source</div>
-          <div class="technique-desc">Once your output is perfect, convert that note into a source in NotebookLM. That "perfect" logic persists for all future tasks in the project.</div>
-        </div>
-      </div>
-      <div class="step-why">
-        <p class="step-why-label">Why Haiku 4.5 or Gemini Pro Fast</p>
-        <p class="step-why-text">Both deliver near-frontier performance at significantly lower token cost. Reserving your high-reasoning quota for Steps 4–5 means you can run a complete 7-step workflow without hitting limits.</p>
-      </div>
-    </div>
-  </div>
+        <p class="step-body">
+          Iterate concepts inside interactive visual canvases. Establish strict guardrails that make it structurally difficult for models to drift from your targeted logic.
+        </p>
 
-  <!-- STEP 7 -->
-  <div class="step-row" id="step-7" style="--step-color:#C9A84C;">
-    <div class="step-num-col"><span class="step-num-display">7</span></div>
-    <div class="step-content">
-      <div class="step-header">
-        <div class="step-title-group">
-          <p class="step-phase">Compound Growth</p>
-          <h2 class="step-title">Nightly Compounding<br><em>The 0.01% Loop</em></h2>
-        </div>
-        <div class="step-ai-pills">
-          <div class="ai-pill" style="border-color:#C9A84C;">
-            <div class="ai-pill-dot" style="background:#C9A84C;"></div>
-            <span class="ai-pill-text">Claude Scheduled</span>
+        <p class="step-tech-title">Scaffolding Techniques</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🖼️</span>
+              <span class="technique-name">Canvas Selection</span>
+            </div>
+            <p class="technique-desc">Edit sections directly inside visual workspaces to tweak tone without restarting prompts.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🧠</span>
+              <span class="technique-name">Advisor Board</span>
+            </div>
+            <p class="technique-desc">Instruct the AI to simulate classic experts relevant to your business domain.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">📐</span>
+              <span class="technique-name">PSL Framework</span>
+            </div>
+            <p class="technique-desc">Reformat responses into strict, high-impact loops: <code>Point, Story, Lesson</code>.</p>
           </div>
         </div>
-      </div>
-      <p class="step-body">The real edge isn't the prompt — it's the system that runs while you sleep. Step 7 turns your AI setup into a compounding machine that gets smarter every single day without your input.</p>
-      <div class="step-techniques">
-        <div class="technique-card">
-          <span class="technique-icon">🌙</span>
-          <div class="technique-name">Nightly Review</div>
-          <div class="technique-desc">Use Claude's scheduled loops to read everything added to your knowledge base that day. Runs automatically at a set time.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">🔗</span>
-          <div class="technique-name">Orphan Note Detection</div>
-          <div class="technique-desc">The loop identifies "orphan notes" — mentions of people or projects that don't have their own files yet — and flags them for follow-up.</div>
-        </div>
-        <div class="technique-card">
-          <span class="technique-icon">📊</span>
-          <div class="technique-name">Consolidation</div>
-          <div class="technique-desc">Duplicates are merged. Maps of Content are updated. You wake up to a smarter, more connected system every morning — automatically.</div>
+
+        <div class="step-why">
+          <p class="step-why-label">Refinement Strategy</p>
+          <p class="step-why-text">A visual Canvas environment supports quick text modifications, while GPT-5.5's reasoning layers help organize abstract brainstorm sessions into usable project files.</p>
         </div>
       </div>
-      <div class="step-why">
-        <p class="step-why-label">Why Claude Scheduled Tasks</p>
-        <p class="step-why-text">Claude's native scheduling hooks let you run cron-style tasks without external infrastructure. Program it once. The system compounds daily. This is the difference between using AI and operating AI.</p>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="step-row" id="step-4" data-models="notebooklm claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6;">
+      <div class="step-num-col">
+        <span class="step-num-display">4</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 04 — Execution</p>
+            <h2 class="step-title">Agentic Skills<br><em>Multi-Agent Operations</em></h2>
+          </div>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-notebooklm); --pill-bg: var(--color-notebooklm-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">NotebookLM</span>
+            </div>
+            <div class="ai-pill" style="--pill-color: var(--color-claude); --pill-bg: var(--color-claude-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Claude Opus 4.8</span>
+            </div>
+          </div>
+        </div>
+        <p class="step-body">
+          Transition away from manual prompts toward autonomous agents. Route tasks to specialized units that research and execute processes in parallel.
+        </p>
+
+        <p class="step-tech-title">Execution Workflows</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">⚡</span>
+              <span class="technique-name">The Split Setup</span>
+            </div>
+            <p class="technique-desc">Isolate verified facts in NotebookLM; run execution tasks with highly capable coding assistants.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🤖</span>
+              <span class="technique-name">Sub-Agent Chains</span>
+            </div>
+            <p class="technique-desc">Instruct primary agents to run background units that check style and logic.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">⏰</span>
+              <span class="technique-name">Scheduled Tasks</span>
+            </div>
+            <p class="technique-desc">Schedule workflows to complete research, reporting, and coding reviews automatically.</p>
+          </div>
+        </div>
+
+        <div class="step-why">
+          <p class="step-why-label">Orchestration Strategy</p>
+          <p class="step-why-text">Claude Opus's development hooks easily coordinate multi-step workflows, ensuring complex outputs are generated and verified simultaneously.</p>
+        </div>
       </div>
     </div>
-  </div>
 
-</main>
+    <!-- PHASE 5 -->
+    <div class="step-row" id="step-5" data-models="claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6;">
+      <div class="step-num-col">
+        <span class="step-num-display">5</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 05 — Refinement</p>
+            <h2 class="step-title">Stylistic Cloning<br><em>Nuanced Calibration</em></h2>
+          </div>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-claude); --pill-bg: var(--color-claude-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Claude Fable 5</span>
+            </div>
+            <div class="ai-pill" style="--pill-color: var(--color-claude); --pill-bg: var(--color-claude-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Opus X-High</span>
+            </div>
+          </div>
+        </div>
+        <p class="step-body">
+          Polishing and stylistic calibration. Target tone, logical connections, and syntax structures to match professional standards before distributing.
+        </p>
 
-<!-- SUMMARY STRIP -->
-<section class="summary-strip">
-  <p class="summary-label">At a Glance</p>
-  <div class="summary-grid">
-    <div class="summary-cell" style="--cell-color:#10A37F;">
-      <span class="summary-cell-num">1</span>
-      <div class="summary-cell-name">Identity</div>
-      <div class="summary-cell-ai">GPT-5.5 · Gemini Pro</div>
-    </div>
-    <div class="summary-cell" style="--cell-color:#4285F4;">
-      <span class="summary-cell-num">2</span>
-      <div class="summary-cell-name">Curate</div>
-      <div class="summary-cell-ai">NotebookLM · Gemini Pro</div>
-    </div>
-    <div class="summary-cell" style="--cell-color:#10A37F;">
-      <span class="summary-cell-num">3</span>
-      <div class="summary-cell-name">Model</div>
-      <div class="summary-cell-ai">Canvas · GPT-5.5</div>
-    </div>
-    <div class="summary-cell" style="--cell-color:#C9A84C;">
-      <span class="summary-cell-num">4</span>
-      <div class="summary-cell-name">Execute</div>
-      <div class="summary-cell-ai">NotebookLM · Opus 4.8</div>
-    </div>
-    <div class="summary-cell" style="--cell-color:#A8A8A8;">
-      <span class="summary-cell-num">5</span>
-      <div class="summary-cell-name">Refine</div>
-      <div class="summary-cell-ai">Fable 5 · Opus X-High</div>
-    </div>
-    <div class="summary-cell" style="--cell-color:#7A7872;">
-      <span class="summary-cell-num">6</span>
-      <div class="summary-cell-name">Finalize</div>
-      <div class="summary-cell-ai">Haiku 4.5 · Gemini Fast</div>
-    </div>
-    <div class="summary-cell" style="--cell-color:#C9A84C;">
-      <span class="summary-cell-num">7</span>
-      <div class="summary-cell-name">Compound</div>
-      <div class="summary-cell-ai">Claude Scheduled</div>
-    </div>
-  </div>
-</section>
+        <p class="step-tech-title">Refinement Tools</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">✍️</span>
+              <span class="technique-name">Tone Extraction</span>
+            </div>
+            <p class="technique-desc">Feed chosen writing samples to the model to generate permanent custom Style Guides.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🔗</span>
+              <span class="technique-name">X-High Setting</span>
+            </div>
+            <p class="technique-desc">Utilize deep reasoning to review work for structural flow and logical gaps.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🌟</span>
+              <span class="technique-name">Adaptive Reasoning</span>
+            </div>
+            <p class="technique-desc">Rely on self-correcting models to tweak styles dynamically without human steering.</p>
+          </div>
+        </div>
 
-<!-- FOOTER -->
-<footer>
-  <p class="footer-left">Dragontorpedo — AI Task Mastery 2026</p>
-  <p class="footer-right">github.com/dragontorpedo</p>
-</footer>
+        <div class="step-why">
+          <p class="step-why-label">Quality Strategy</p>
+          <p class="step-why-text">Claude Fable 5 and high-reasoning engines prioritize quality adjustments over fast output, crucial for high-priority documents.</p>
+        </div>
+      </div>
+    </div>
 
+    <!-- PHASE 6 -->
+    <div class="step-row" id="step-6" data-models="claude gemini" style="--step-color: var(--color-gemini); --step-color-rgb: 66, 133, 244;">
+      <div class="step-num-col">
+        <span class="step-num-display">6</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 06 — Finalization</p>
+            <h2 class="step-title">Token Optimization<br><em>Hot-Swapping</em></h2>
+          </div>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-claude); --pill-bg: var(--color-claude-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Claude Haiku 4.5</span>
+            </div>
+            <div class="ai-pill" style="--pill-color: var(--color-gemini); --pill-bg: var(--color-gemini-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Gemini Pro Fast</span>
+            </div>
+          </div>
+        </div>
+        <p class="step-body">
+          Protect expensive monthly limits. Switch low-intensity tasks to fast, lightweight processors to complete formatting and syntax changes.
+        </p>
+
+        <p class="step-tech-title">Optimization Methods</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🔄</span>
+              <span class="technique-name">Hot-Swap</span>
+            </div>
+            <p class="technique-desc">Switch active conversations to faster models for basic edits and structural formatting.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🚫</span>
+              <span class="technique-name">.geminiignore</span>
+            </div>
+            <p class="technique-desc">Deploy blocklists to ignore heavy assets like diagnostic logs or media files.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">💾</span>
+              <span class="technique-name">Knowledge Saving</span>
+            </div>
+            <p class="technique-desc">Save finalized work directly back into project hubs to build local reference libraries.</p>
+          </div>
+        </div>
+
+        <div class="step-why">
+          <p class="step-why-label">Resource Strategy</p>
+          <p class="step-why-text">Haiku and Gemini Fast deliver rapid outputs at minimal cost, preserving premium tokens for early-stage brainstorming and task planning.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 7 -->
+    <div class="step-row" id="step-7" data-models="claude" style="--step-color: var(--color-claude); --step-color-rgb: 217, 119, 6;">
+      <div class="step-num-col">
+        <span class="step-num-display">7</span>
+      </div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title-group">
+            <p class="step-phase">Phase 07 — Compound Growth</p>
+            <h2 class="step-title">Nightly Compounding<br><em>The Autonomous Loop</em></h2>
+          </div>
+          <div class="step-ai-pills">
+            <div class="ai-pill" style="--pill-color: var(--color-claude); --pill-bg: var(--color-claude-dim);">
+              <div class="ai-pill-dot"></div>
+              <span class="ai-pill-text">Claude Scheduled</span>
+            </div>
+          </div>
+        </div>
+        <p class="step-body">
+          Build systems that improve in the background. Schedule nightly operations to clean documentation, parse logs, and connect unrelated ideas automatically.
+        </p>
+
+        <p class="step-tech-title">Compounding Workflows</p>
+        <div class="step-techniques">
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🌙</span>
+              <span class="technique-name">Nightly Audits</span>
+            </div>
+            <p class="technique-desc">Schedule background scripts to classify, clean, and index new research files.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">🔗</span>
+              <span class="technique-name">Orphan Scans</span>
+            </div>
+            <p class="technique-desc">Find scattered workspace concepts and construct fresh structural indexes automatically.</p>
+          </div>
+          <div class="technique-card">
+            <div class="technique-head">
+              <span class="technique-icon">📊</span>
+              <span class="technique-name">Auto-Cleaning</span>
+            </div>
+            <p class="technique-desc">Instruct background scripts to merge matching research and organize asset files.</p>
+          </div>
+        </div>
+
+        <div class="step-why">
+          <p class="step-why-label">Automated Growth Strategy</p>
+          <p class="step-why-text">Scheduled API scripts turn static project files into clean knowledge graphs that improve daily without manual work.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SUMMARY MATRIX -->
+  <section class="summary-strip">
+    <p class="summary-label">At a Glance Matrix</p>
+    <div class="summary-grid">
+      <div class="summary-cell" data-target="step-1" style="--cell-color: var(--color-openai);">
+        <span class="summary-cell-num">1</span>
+        <div class="summary-cell-name">Identity</div>
+        <div class="summary-cell-ai">GPT · Gemini</div>
+      </div>
+      <div class="summary-cell" data-target="step-2" style="--cell-color: var(--color-gemini);">
+        <span class="summary-cell-num">2</span>
+        <div class="summary-cell-name">Curate</div>
+        <div class="summary-cell-ai">NotebookLM · Pro</div>
+      </div>
+      <div class="summary-cell" data-target="step-3" style="--cell-color: var(--color-openai);">
+        <span class="summary-cell-num">3</span>
+        <div class="summary-cell-name">Model</div>
+        <div class="summary-cell-ai">Canvas · GPT</div>
+      </div>
+      <div class="summary-cell" data-target="step-4" style="--cell-color: var(--color-claude);">
+        <span class="summary-cell-num">4</span>
+        <div class="summary-cell-name">Execute</div>
+        <div class="summary-cell-ai">Opus · Notebook</div>
+      </div>
+      <div class="summary-cell" data-target="step-5" style="--cell-color: var(--color-claude);">
+        <span class="summary-cell-num">5</span>
+        <div class="summary-cell-name">Refine</div>
+        <div class="summary-cell-ai">Fable · Opus</div>
+      </div>
+      <div class="summary-cell" data-target="step-6" style="--cell-color: var(--color-gemini);">
+        <span class="summary-cell-num">6</span>
+        <div class="summary-cell-name">Optimize</div>
+        <div class="summary-cell-ai">Haiku · Fast</div>
+      </div>
+      <div class="summary-cell" data-target="step-7" style="--cell-color: var(--color-claude);">
+        <span class="summary-cell-num">7</span>
+        <div class="summary-cell-name">Compound</div>
+        <div class="summary-cell-ai">Scheduled</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-left">Dragontorpedo — AI Task Mastery 2026</p>
+    <p class="footer-right">github.com/dragontorpedo</p>
+  </footer>
+
+</div>
+
+<!-- SCRIPTS -->
 <script>
 'use strict';
 
-/* ── PROGRESS MAP ── */
+/* ── PROGRESS NODE DATA ── */
 const steps = [
-  { label: 'Identity',  color: '#10A37F' },
-  { label: 'Curate',    color: '#4285F4' },
-  { label: 'Model',     color: '#10A37F' },
-  { label: 'Execute',   color: '#C9A84C' },
-  { label: 'Refine',    color: '#A8A8A8' },
-  { label: 'Finalize',  color: '#7A7872' },
-  { label: 'Compound',  color: '#C9A84C' },
+  { label: 'Identity', color: 'var(--color-openai)', colorDim: 'var(--color-openai-dim)' },
+  { label: 'Curate',   color: 'var(--color-gemini)', colorDim: 'var(--color-gemini-dim)' },
+  { label: 'Model',    color: 'var(--color-openai)', colorDim: 'var(--color-openai-dim)' },
+  { label: 'Execute',  color: 'var(--color-claude)', colorDim: 'var(--color-claude-dim)' },
+  { label: 'Refine',   color: 'var(--color-claude)', colorDim: 'var(--color-claude-dim)' },
+  { label: 'Optimize', color: 'var(--color-gemini)', colorDim: 'var(--color-gemini-dim)' },
+  { label: 'Compound', color: 'var(--color-claude)', colorDim: 'var(--color-claude-dim)' },
 ];
 
+/* ── RENDER DYNAMIC NAVIGATION MAP ── */
 const map = document.getElementById('progressMap');
-steps.forEach((s, i) => {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'pm-step';
-  wrapper.title = `Step ${i+1}: ${s.label}`;
+steps.forEach((step, i) => {
+  const container = document.createElement('div');
+  container.className = 'pm-step';
 
   const node = document.createElement('div');
   node.className = 'pm-node';
   node.textContent = i + 1;
-  node.style.setProperty('--step-color', s.color);
+  node.style.setProperty('--node-color', step.color);
+  node.style.setProperty('--node-color-dim', step.colorDim);
   node.setAttribute('role', 'button');
   node.setAttribute('tabindex', '0');
-  node.setAttribute('aria-label', `Jump to Step ${i+1}: ${s.label}`);
+  node.setAttribute('aria-label', `Navigate to Step ${i+1}: ${step.label}`);
 
   node.addEventListener('click', () => {
-    const target = document.getElementById(`step-${i+1}`);
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToStep(i + 1);
   });
-  node.addEventListener('keydown', e => {
+  node.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      const target = document.getElementById(`step-${i+1}`);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToStep(i + 1);
     }
   });
 
-  wrapper.appendChild(node);
+  container.appendChild(node);
 
   if (i < steps.length - 1) {
     const line = document.createElement('div');
     line.className = 'pm-line';
-    wrapper.appendChild(line);
+    line.id = `pm-line-${i}`;
+    container.appendChild(line);
   }
 
-  map.appendChild(wrapper);
+  map.appendChild(container);
 });
 
-/* ── INTERSECTION OBSERVER: highlight active node ── */
-const stepEls = document.querySelectorAll('.step-row');
-const pmNodes = document.querySelectorAll('.pm-node');
+function scrollToStep(num) {
+  const target = document.getElementById(`step-${num}`);
+  if (target) {
+    const yOffset = -90; // account for fixed navigation header
+    const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+}
 
-const obs = new IntersectionObserver((entries) => {
+/* ── THEME ENGINE SWITCHER ── */
+const themeToggle = document.getElementById('themeToggle');
+const rootElement = document.documentElement;
+
+function applyTheme(theme) {
+  rootElement.setAttribute('data-theme', theme);
+  localStorage.setItem('mastery-theme', theme);
+  rootElement.style.colorScheme = theme;
+}
+
+themeToggle.addEventListener('click', () => {
+  const currentTheme = rootElement.getAttribute('data-theme');
+  const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  applyTheme(targetTheme);
+});
+
+/* ── INTERACTIVE FILTERING ENGINE ── */
+const filterButtons = document.querySelectorAll('.filter-btn');
+const stepRows = document.querySelectorAll('.step-row');
+
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const filterVal = btn.getAttribute('data-filter');
+    stepRows.forEach(row => {
+      if (filterVal === 'all') {
+        row.classList.remove('filtered-out');
+      } else {
+        const supportedModels = row.getAttribute('data-models').split(' ');
+        if (supportedModels.includes(filterVal)) {
+          row.classList.remove('filtered-out');
+        } else {
+          row.classList.add('filtered-out');
+        }
+      }
+    });
+  });
+});
+
+/* ── MATRIX NAVIGATION ── */
+document.querySelectorAll('.summary-cell').forEach(cell => {
+  cell.addEventListener('click', () => {
+    const targetId = cell.getAttribute('data-target');
+    const stepNum = parseInt(targetId.split('-')[1]);
+    scrollToStep(stepNum);
+  });
+});
+
+/* ── SCROLL OBSERVER FOR PROGRESS TRACKING ── */
+const observerOptions = {
+  root: null,
+  rootMargin: '-10% 0px -60% 0px',
+  threshold: 0
+};
+
+const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      const id = entry.target.id; // step-N
-      const idx = parseInt(id.split('-')[1]) - 1;
-      pmNodes.forEach((n, i) => {
-        n.style.borderColor = i === idx ? steps[i].color : '';
-        n.style.color       = i === idx ? steps[i].color : '';
-        n.style.background  = i === idx ? `${steps[i].color}18` : '';
-      });
+      const stepId = entry.target.id;
+      const stepNum = parseInt(stepId.split('-')[1]);
+      updateProgressWidget(stepNum);
     }
   });
-}, { threshold: 0.4 });
+}, observerOptions);
 
-stepEls.forEach(el => obs.observe(el));
+stepRows.forEach(row => observer.observe(row));
 
+function updateProgressWidget(currentActiveNum) {
+  const nodes = document.querySelectorAll('.pm-node');
+  const lines = document.querySelectorAll('.pm-line');
+
+  nodes.forEach((node, i) => {
+    const stepNum = i + 1;
+    if (stepNum <= currentActiveNum) {
+      node.classList.add('active');
+    } else {
+      node.classList.remove('active');
+    }
+  });
+
+  lines.forEach((line, i) => {
+    const lineNum = i + 1;
+    if (lineNum < currentActiveNum) {
+      line.classList.add('active');
+      const stepColor = steps[i].color;
+      line.style.setProperty('--line-color', stepColor);
+    } else {
+      line.classList.remove('active');
+      line.style.removeProperty('--line-color');
+    }
+  });
+}
 </script>
 
 </body>
