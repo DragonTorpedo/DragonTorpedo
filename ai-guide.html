@@ -1170,13 +1170,42 @@ async function executeGeminiCall() {
   const promptValue = aiInputField.value.trim();
   if (!promptValue) return;
 
-  /* Look for keys securely linked to hosting environment properties or fallback to client local device cache */
-  const apiTokenKey = window.ENV_GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
+  const apiTokenKey = localStorage.getItem('GEMINI_API_KEY');
   
   if (!apiTokenKey) {
-    aiOutputBox.textContent = "Error: Stored key token path missing. Run local machine command line setup:\nlocalStorage.setItem('GEMINI_API_KEY', 'your_key');";
+    aiOutputBox.textContent = "Error: Key not found. Please set it in the console.";
     return;
   }
+
+  aiInputField.value = '';
+  aiSubmitBtn.disabled = true;
+  aiOutputBox.textContent = "Connecting to Gemini...";
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiTokenKey
+      },
+      body: JSON.stringify({ 
+        contents: [{ role: "user", parts: [{ text: promptValue }] }] 
+      })
+    });
+
+    const payloadData = await response.json();
+    
+    if (payloadData.candidates && payloadData.candidates[0].content.parts[0].text) {
+      aiOutputBox.textContent = payloadData.candidates[0].content.parts[0].text;
+    } else {
+      aiOutputBox.textContent = "Error: " + JSON.stringify(payloadData);
+    }
+  } catch (error) {
+    aiOutputBox.textContent = "Network Error: " + error.message;
+  } finally {
+    aiSubmitBtn.disabled = false;
+  }
+}
 
   aiInputField.value = '';
   aiSubmitBtn.disabled = true;
