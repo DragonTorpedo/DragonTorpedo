@@ -579,6 +579,32 @@
     }
     .ai-submit-btn:disabled { opacity: 0.4; }
 
+    /* ── FLOATING CHAT BUTTON ── */
+    .floating-chat-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--gold);
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      z-index: 150;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.2s var(--ease), background 0.2s var(--ease);
+    }
+    .floating-chat-btn:hover {
+      transform: translateY(-4px);
+      background: #e0c268;
+    }
+
     /* ── FOOTER ── */
     footer {
       padding: 3rem;
@@ -616,6 +642,7 @@
       .hero h1 { font-size: 2.5rem; }
       .topnav { padding: 0 1.2rem; }
       .ai-console { width: 100vw; }
+      .floating-chat-btn { bottom: 1.5rem; right: 1.5rem; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
@@ -663,10 +690,14 @@
       </button>
       <div class="latest-content" id="latestContent">
         <a class="latest-item" href="#" onclick="openConsoleSandbox('Interactive Sandbox Engine Deployment')">
-          <span class="latest-item-name">Claude, Gemini, ChatGPT</span>
+          <span class="latest-item-name">AI</span>
         </a>
-         <a class="latest-item" href="#">
+         <a class="latest-item" href="aiguide-7step.html">
           <span class="latest-item-name">7-step work</span>
+        </a>
+         </a>
+         <a class="latest-item" href="aiguide-mutiguide-CGC.html">
+          <span class="latest-item-name">Claude, Gemini, ChatGPT</span>
         </a>
          <a class="latest-item" href="#">
           <span class="latest-item-name">Email Writing</span>
@@ -680,7 +711,7 @@
         <span class="company-chevron">▼</span>
       </button>
       <div class="tool-list">
-        <a class="tool-item" href="#">
+        <a class="tool-item" href="aiguide-anthropic-claude.html">
           <div class="tool-item-dot"></div>
           <span class="tool-item-name">Claude</span>
           <span class="tool-item-tag">Guide →</span>
@@ -699,7 +730,7 @@
         <span class="company-chevron">▼</span>
       </button>
       <div class="tool-list">
-        <a class="tool-item" href="#">
+        <a class="tool-item" href="aiguide-google-gemini.html">
           <div class="tool-item-dot"></div>
           <span class="tool-item-name">Gemini</span>
           <span class="tool-item-tag">Guide →</span>
@@ -1021,6 +1052,13 @@
   </footer>
 
 </main>
+
+<button class="floating-chat-btn" onclick="openConsoleSandbox('Interactive Sandbox Engine Deployment')" aria-label="Open Chat">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+  Chat
+</button>
 
 <script>
 'use strict';
